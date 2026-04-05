@@ -74,7 +74,7 @@ Notes:
 
 - Passwords: `bcryptjs` for hashing and salting admin passwords.
 - JWT: role-based middleware validates tokens (admin role required for protected routes).
-- SMTP credentials: encrypted in the database using AES-256-CBC (server-side utilities handle encrypt/decrypt with a `DB_ENCRYPTION_KEY`).
+- SMTP credentials: encrypted in the database using AES-256-CBC (server-side utilities handle encrypt/decrypt with `DB_ENCRYPTION_KEY` and `DB_ENCRYPTION_SALT`).
 - Student privacy: the Home page's "Wish All" uses a BCC mailto (one mail client window) so recipients are not exposed to each other. Individual "Send Wish" buttons open a personalized mailto per student so the sender uses their email client.
 
 ---
@@ -90,8 +90,8 @@ Quick start
 1. Clone the repository
 
 ```bash
-git clone <repo-url>
-cd reminder
+git clone https://github.com/shrs425p/Birthday-Reminder.git
+cd Birthday-Reminder
 ```
 
 2. Install dependencies
