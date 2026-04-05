@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Page Not Found | Birthday Reminder</title>
+    <link rel="stylesheet" href="/style.css">
+    <style>
+        .error-page {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: calc(100vh - 64px);
+            text-align: center;
+            gap: 16px;
+        }
+
+        .error-code {
+            font-family: var(--font-mono);
+            font-size: 96px;
+            font-weight: 500;
+            color: var(--gray-100);
+            line-height: 1;
+        }
+
+        /* --- Mascot Blob CSS --- */
+        .mascot-blob {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+            background: linear-gradient(45deg, var(--green), var(--amber));
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1), inset 10px 10px 20px rgba(255, 255, 255, 0.1);
+            animation: blobMorph 8s ease-in-out infinite alternate, blobFloat 6s ease-in-out infinite;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            user-select: none;
+            margin-bottom: -10px;
+        }
+
+        .mascot-blob.spin {
+            animation: happySpin 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards !important;
+        }
+
+        @keyframes blobMorph {
+            0% {
+                border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+            }
+
+            34% {
+                border-radius: 70% 30% 50% 50% / 30% 30% 70% 70%;
+            }
+
+            67% {
+                border-radius: 100% 60% 60% 100% / 100% 100% 60% 60%;
+            }
+
+            100% {
+                border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+            }
+        }
+
+        @keyframes blobFloat {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        @keyframes happySpin {
+            0% {
+                transform: scale(0.9) rotate(0deg);
+            }
+
+            50% {
+                transform: scale(1.2) rotate(180deg) translateY(-20px);
+            }
+
+            100% {
+                transform: scale(1) rotate(360deg) translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="topnav">
+        <div class="topnav-logo">Birthday Reminder</div>
+        <nav class="nav-menu">
+            <a href="/" class="nav-link">Home</a>
+            <a href="/admin" class="nav-link">Admin Panel</a>
+            <a href="/student" class="nav-link">Student Panel</a>
+            <button id="themeToggleBtn" aria-label="Toggle Dark Mode"></button>
+        </nav>
+    </header>
+
+    <main class="main-content">
+        <div class="error-page fade-in">
+            <!-- Friendly Mascot Easter Egg -->
+            <div class="mascot-blob" id="mascotBlob" title="Don't worry, I'm just as lost as you are!"></div>
+
+            <div class="error-code">404</div>
+            <h1 class="page-title">Page Not Found</h1>
+            <p class="page-description">The page you're looking for doesn't exist.</p>
+            <a href="/" class="btn btn-primary" style="margin-top: 8px;">← Back to Home</a>
+        </div>
+    </main>
+    <script>
+        /**
+         * 404 Mascot Logic (Self-Contained)
+         */
+        function init404Mascot() {
+            const mascot = document.getElementById('mascotBlob');
+            if (!mascot) return;
+
+            mascot.innerHTML = `
+                <div class="face-container" style="
+                    display: flex; flex-direction: column; align-items: center; justify-content: center;
+                    gap: 2px; transition: transform 0.1s ease-out; pointer-events: none; width: 100%; height: 100%;
+                ">
+                    <div style="display: flex; gap: 8px;">
+                        <div class="eye left-eye" style="width: 6px; height: 6px; background: white; border-radius: 50%; transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);"></div>
+                        <div class="eye right-eye" style="width: 6px; height: 6px; background: white; border-radius: 50%; transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);"></div>
+                    </div>
+                    <div class="mouth" style="
+                        width: 10px; height: 4px; border-bottom: 2px solid white; border-radius: 50%;
+                        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); margin-top: 1px;
+                    "></div>
+                </div>
+            `;
+
+            const face = mascot.querySelector('.face-container');
+            const eyes = mascot.querySelectorAll('.eye');
+            const mouth = mascot.querySelector('.mouth');
+
+            function setFaceState(state) {
+                if (state === 'happy') {
+                    eyes.forEach(e => e.style.transform = 'scaleY(1.5) scaleX(1.2)');
+                    mouth.style.height = '6px';
+                    mouth.style.width = '12px';
+                    mouth.style.borderBottomWidth = '3px';
+                } else if (state === 'squint') {
+                    eyes.forEach(e => e.style.transform = 'scaleY(0.2) scaleX(1.4)');
+                    mouth.style.height = '2px';
+                    mouth.style.width = '8px';
+                    mouth.style.borderBottomWidth = '2px';
+                } else if (state === 'sleep') {
+                    eyes.forEach(e => e.style.transform = 'scaleY(0.1) scaleX(1.3)');
+                    mouth.style.height = '2px';
+                    mouth.style.width = '6px';
+                    mouth.style.borderBottomWidth = '0px';
+                    mouth.style.borderTopWidth = '2px';
+                    mouth.style.borderTopStyle = 'solid';
+                    mouth.style.borderTopColor = 'white';
+                } else {
+                    eyes.forEach(e => e.style.transform = 'scale(1)');
+                    mouth.style.height = '4px';
+                    mouth.style.width = '10px';
+                    mouth.style.borderBottomWidth = '2px';
+                    mouth.style.borderTopWidth = '0px';
+                }
+            }
+
+            let isSleeping = false;
+            let sleepTimer;
+
+            mascot.addEventListener('click', () => {
+                mascot.classList.remove('spin');
+                void mascot.offsetWidth;
+                mascot.classList.add('spin');
+                setFaceState('squint');
+                setTimeout(() => setFaceState('neutral'), 650);
+            });
+
+            mascot.addEventListener('mouseenter', () => {
+                if (!isSleeping && !mascot.classList.contains('spin')) setFaceState('happy');
+            });
+
+            mascot.addEventListener('mouseleave', () => {
+                if (!isSleeping && !mascot.classList.contains('spin')) setFaceState('neutral');
+            });
+
+            document.addEventListener('mousemove', (e) => {
+                if (isSleeping) return;
+                const rect = mascot.getBoundingClientRect();
+                const centerX = rect.left + rect.width / 2;
+                const centerY = rect.top + rect.height / 2;
+                const deltaX = e.clientX - centerX;
+                const deltaY = e.clientY - centerY;
+                const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+
+                if (distance < 1000) {
+                    const maxMove = 10;
+                    const moveX = (deltaX / 1000) * maxMove;
+                    const moveY = (deltaY / 1000) * maxMove;
+                    face.style.transform = `translate(${moveX}px, ${moveY}px)`;
+                }
+            });
+
+            setFaceState('neutral');
+        }
+
+        document.addEventListener('DOMContentLoaded', init404Mascot);
+    </script>
+    <script src="/js/ui-utils.js"></script>
+</body>
+
+</html>
