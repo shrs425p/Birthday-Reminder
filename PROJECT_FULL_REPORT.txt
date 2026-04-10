@@ -1,0 +1,570 @@
+BIRTHDAY REMINDER - COMPLETE PROJECT REPORT
+Generated: 2026-04-10
+
+====================================================================
+1) PROJECT OVERVIEW
+====================================================================
+Project Name:
+Birthday Reminder
+
+Project Type:
+Web application for managing student birthday records, reminders, and
+email-based birthday wishes.
+
+Primary Goal:
+- Maintain birthday records
+- Allow student-side correction requests
+- Provide admin-side approval and management
+- Support manual and automatic email wishes
+
+Core Modules:
+- Public Home page
+- Public Student page
+- Admin panel (authenticated)
+- Backend APIs
+- Scheduler and SMTP integration
+
+====================================================================
+2) PROBLEM STATEMENT AND OBJECTIVES
+====================================================================
+Problem:
+Institutions often track birthdays manually, which leads to missed wishes,
+incorrect records, and no audit trail for corrections.
+
+Objectives:
+- Centralize birthday data
+- Offer quick public visibility of birthdays
+- Enable correction requests without requiring student login
+- Secure admin operations with token-based auth
+- Automate wish sending through SMTP and scheduled jobs
+
+====================================================================
+3) TECH STACK
+====================================================================
+Frontend:
+- HTML5
+- CSS3 (modular split by shared/features/pages)
+- Vanilla JavaScript
+
+Backend:
+- Node.js (CommonJS)
+- Express
+- SQLite (better-sqlite3)
+
+Authentication and Security:
+- jsonwebtoken (JWT)
+- bcryptjs (password hashing)
+- AES-256-CBC encryption utility for SMTP password storage
+
+Scheduler and Email:
+- node-cron
+- nodemailer
+
+File handling:
+- multer
+- xlsx
+
+====================================================================
+4) LANGUAGES, FRAMEWORKS, TOOLS
+====================================================================
+Languages:
+- JavaScript
+- HTML
+- CSS
+- SQL (SQLite statements in app code)
+- Batch scripting (start/kill helpers)
+
+Runtime/Framework:
+- Node.js
+- Express 5
+
+Important NPM Packages:
+- express
+- cors
+- dotenv
+- better-sqlite3
+- bcryptjs
+- jsonwebtoken
+- multer
+- xlsx
+- nodemailer
+- node-cron
+- eslint (dev)
+- nodemon (dev)
+
+Dev/Project Utilities:
+- Render deployment config (render.yaml)
+- Project docs (README.md, WORKING.md, workflow.md, PROJECT_MAP.md)
+
+====================================================================
+5) HIGH-LEVEL PROJECT STRUCTURE
+====================================================================
+Root:
+- .env, .env.example
+- README.md
+- WORKING.md
+- workflow.md
+- PROJECT_MAP.md
+- render.yaml
+
+Backend:
+- backend/server.js
+- backend/scheduler.js
+- backend/config/db.js
+- backend/config/defaultTemplate.js
+- backend/features/auth/*
+- backend/features/birthdays/*
+- backend/features/requests/*
+- backend/features/settings/*
+- backend/middleware/*
+- backend/utils/crypto.js
+- backend/uploads/
+
+Frontend:
+- frontend/pages/index.html
+- frontend/pages/admin.html
+- frontend/pages/student.html
+- frontend/pages/404.html
+- frontend/style.css
+- frontend/styles/shared/*
+- frontend/styles/features/*
+- frontend/styles/pages/*
+- frontend/js/core/*
+- frontend/js/pages/*
+
+====================================================================
+6) BACKEND ARCHITECTURE
+====================================================================
+Entry Point:
+- backend/server.js
+
+Responsibilities:
+- Load environment via dotenv
+- Initialize Express middleware
+- Serve frontend static assets
+- Route mounting for API modules
+- Start scheduler at boot
+- Handle API and non-API 404 responses
+- Apply global error handler
+
+Feature Modules:
+1. Auth:
+   - Login
+   - Change password
+2. Birthdays:
+   - CRUD operations
+   - Today/upcoming/stats
+   - Bulk import
+   - SMTP wish sending
+3. Requests:
+   - Create correction ticket (public)
+   - List/resolve requests (admin)
+4. Settings:
+   - Get settings
+   - Update settings
+   - Restart scheduler when auto_send_time changes
+
+====================================================================
+7) FRONTEND ARCHITECTURE
+====================================================================
+Pages:
+- Home page (public)
+- Student page (public)
+- Admin page (login + operations)
+- 404 page
+
+JS Split:
+- Core API modules: frontend/js/core/api/
+- Core auth/session: frontend/js/core/auth.js
+- Core UI modules: frontend/js/core/ui/
+- Page modules: frontend/js/pages/
+- Admin submodules: frontend/js/pages/admin/
+
+CSS Split:
+- frontend/style.css is entrypoint
+- shared tokens/layout manifests
+- reusable feature component manifests
+- page-specific home styles
+
+====================================================================
+8) SCREENS AND FEATURES (UI REPORT)
+====================================================================
+1. Home Screen (/)
+- Dynamic greeting
+- Today's Birthday Wall
+- Upcoming birthdays strip
+- Calendar and quick actions
+- Mailto-based wish action
+
+2. Student Screen (/student)
+- Search all birthdays
+- Submit correction request form
+- Request fields: name, corrected DOB, email, dept, note
+
+3. Admin Screen (/admin)
+A) Login section
+- Username/password
+- JWT session
+
+B) Birthdays tab
+- Add/edit/delete birthday
+- Search list
+- Bulk upload (CSV/XLSX)
+- Export CSV / sample CSV
+- Send wishes today
+
+C) Requests tab
+- View pending requests
+- Approve/reject
+
+D) Settings tab
+- SMTP email and app password
+- Daily dispatch time
+- Email template editor + preview
+
+====================================================================
+9) WORKFLOW (END-TO-END)
+====================================================================
+A) Home flow
+1. Browser loads index page
+2. Frontend calls:
+   - GET /api/birthdays/today
+   - GET /api/birthdays/upcoming
+   - GET /api/birthdays
+3. UI renders today cards, upcoming cards, stats
+
+B) Student correction flow
+1. Student submits correction form
+2. POST /api/requests
+3. Record inserted with pending status
+4. Admin sees request in Requests tab
+5. Admin approve/reject via PUT /api/requests/:id/status
+
+C) Admin login flow
+1. POST /api/login with role=admin
+2. Backend validates bcrypt hash
+3. JWT token returned
+4. Token stored in localStorage and sent in Authorization header
+
+D) Email sending flow (manual)
+1. Admin configures SMTP in Settings
+2. Admin clicks Send Wishes Today
+3. API calls birthday wish handler
+4. Transporter reads SMTP host/port from env and user/pass from DB settings
+5. Emails sent to today's birthday rows with email addresses
+
+E) Email sending flow (auto scheduler)
+1. Server starts scheduler
+2. Scheduler reads auto_send_time from settings
+3. Builds cron expression from HH:MM
+4. Executes daily at configured IST time
+5. Sends birthday wishes automatically
+
+====================================================================
+10) API ROUTE SUMMARY
+====================================================================
+Auth:
+- POST /api/login
+- PUT /api/password
+
+Birthdays:
+- GET /api/birthdays
+- GET /api/birthdays/today
+- GET /api/birthdays/upcoming
+- GET /api/birthdays/stats (admin)
+- POST /api/birthdays (admin)
+- PUT /api/birthdays/:id (admin)
+- DELETE /api/birthdays/:id (admin)
+- POST /api/birthdays/upload (admin)
+- POST /api/birthdays/wish (admin)
+
+Requests:
+- POST /api/requests
+- GET /api/requests (admin)
+- PUT /api/requests/:id/status (admin)
+
+Settings:
+- GET /api/settings (admin)
+- PUT /api/settings/:key (admin)
+
+Extra:
+- POST /api/send-wishes
+
+====================================================================
+11) DATABASE DESIGN
+====================================================================
+Database: SQLite (backend/database.db)
+
+Tables:
+1) users
+- id
+- username
+- password (bcrypt hash)
+- role
+
+2) birthdays
+- id
+- name
+- dob
+- note
+- email
+- dept
+
+3) requests
+- id
+- student_name
+- correct_dob
+- email
+- note
+- dept
+- status (default pending)
+- created_at
+
+4) settings
+- key
+- value
+
+Seeded settings:
+- email_template
+- auto_send_time (default 08:00)
+
+====================================================================
+12) SECURITY IMPLEMENTATION
+====================================================================
+- JWT secret read from env
+- Passwords hashed with bcrypt before DB insert/update
+- Auth middleware validates token and role
+- SMTP password encrypted before storage (AES-256-CBC)
+- Settings endpoint protected with requireAuth + requireAdmin
+- Admin routes protected
+- Student and Home routes intentionally public by design
+
+====================================================================
+13) ENVIRONMENT VARIABLES (CONFIG)
+====================================================================
+Required keys:
+- PORT
+- FRONTEND_URL
+- JWT_SECRET
+- DB_ENCRYPTION_KEY
+- DB_ENCRYPTION_SALT
+- SMTP_HOST
+- SMTP_PORT
+- SMTP_SECURE
+
+Optional:
+- BOOTSTRAP_ADMIN_USERNAME
+- BOOTSTRAP_ADMIN_PASSWORD
+- DB_PATH
+- CRON_SCHEDULE (optional fallback)
+
+Important behavior:
+- BOOTSTRAP_ADMIN_* only applies when users table is empty
+- auto_send_time is persisted in DB settings and used by scheduler
+
+====================================================================
+14) FUNCTION INVENTORY (PROJECT-WIDE)
+====================================================================
+FILE: backend/features/auth/controller.js
+  - changePassword
+  - login
+
+FILE: backend/features/birthdays/crudHandlers.js
+  - addBirthday
+  - deleteBirthday
+  - getBirthdays
+  - getStats
+  - getTodaysBirthdays
+  - getUpcomingBirthdays
+  - updateBirthday
+
+FILE: backend/features/birthdays/emailService.js
+  - buildWishPayload
+  - createTransporter
+  - getEmailTemplate
+
+FILE: backend/features/birthdays/importHandlers.js
+  - parseDob
+  - uploadExcelBirthdays
+
+FILE: backend/features/birthdays/wishHandlers.js
+  - sendBirthdayWishes
+  - sendTodayBirthdayWishById
+  - sendTodayBirthdayWishes
+
+FILE: backend/features/requests/controller.js
+  - createRequest
+  - getRequests
+  - updateRequestStatus
+
+FILE: backend/features/settings/controller.js
+  - getSettings
+  - triggerHook
+  - updateSetting
+
+FILE: backend/middleware/authMiddleware.js
+  - requireAdmin
+  - requireAuth
+
+FILE: backend/middleware/errorHandler.js
+  - errorHandler
+
+FILE: backend/utils/crypto.js
+  - decrypt
+  - encrypt
+
+FILE: backend/scheduler.js
+  - createTransporter
+  - startScheduler
+
+FILE: frontend/js/core/api/auth.js
+  - changePasswordAPI
+  - loginAPI
+
+FILE: frontend/js/core/api/birthdays.js
+  - addBirthdayAPI
+  - deleteBirthdayAPI
+  - fetchBirthdaysAPI
+  - fetchTodaysBirthdaysAPI
+  - fetchUpcomingBirthdaysAPI
+  - sendBirthdayWishesAPI
+  - sendTodayWishesAPI
+  - updateBirthdayAPI
+  - uploadExcelAPI
+
+FILE: frontend/js/core/api/requests.js
+  - fetchRequestsAPI
+  - resolveRequestAPI
+  - submitRequestAPI
+
+FILE: frontend/js/core/api/settings.js
+  - fetchSettingsAPI
+  - updateSettingAPI
+
+FILE: frontend/js/core/api/shared.js
+  - apiFetch
+  - getAuthHeaders
+  - withLoading
+
+FILE: frontend/js/core/ui/motion.js
+  - addMagneticEffect
+  - createScratchOff
+  - initAdvancedAnimations
+  - scratch
+
+FILE: frontend/js/core/ui/notifications.js
+  - getEmptyStateHTML
+  - showToast
+
+FILE: frontend/js/core/ui/runtime.js
+  - animate
+  - hideLoadingBar
+  - initInteractiveBackground
+  - initSwipeToDelete
+  - releaseDrag
+  - resize
+  - setButtonLoading
+  - showLoadingBar
+
+FILE: frontend/js/core/ui/theme.js
+  - initTheme
+  - toggleTheme
+
+FILE: frontend/js/core/auth.js
+  - checkSessionOnLoad
+  - hideChangePasswordModal
+  - logout
+  - showChangePasswordModal
+  - showPanel
+
+FILE: frontend/js/pages/admin/settings.js
+  - downloadSampleCSV
+  - el
+  - updateEmailPreview
+
+FILE: frontend/js/pages/admin.js
+  - cancelDelete
+  - cancelEdit
+  - filterAdminBirthdays
+  - isValidDateString
+  - onEnd
+  - onMove
+  - prepareEdit
+  - promptDeleteBirthday
+  - startSwipe
+  - switchTab
+
+FILE: frontend/js/pages/home.js
+  - getUpcomingTurningAge
+  - renderMilestoneCarousel
+  - renderMiniCalendar
+  - renderTodaysActions
+  - renderTodaysBirthdays
+  - triggerCelebration
+  - updateGreeting
+
+FILE: frontend/js/pages/student.js
+  - filterStudentBirthdays
+  - renderStudentBirthdays
+
+====================================================================
+15) SAMPLE CODE EXCERPTS FOR REPORT
+====================================================================
+A) DB schema creation excerpt:
+CREATE TABLE IF NOT EXISTS users (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  username TEXT UNIQUE NOT NULL,
+  password TEXT NOT NULL,
+  role TEXT NOT NULL
+);
+
+B) Admin auth guard excerpt:
+if (!req.user || req.user.role !== 'admin') {
+  return res.status(403).json({ success: false, message: 'Access Denied: Requires Admin role' });
+}
+
+C) Scheduler time extraction excerpt:
+const row = db.prepare("SELECT value FROM settings WHERE key = 'auto_send_time'").get();
+const timeParts = row.value.split(':');
+schedule = `${minute} ${hour} * * *`;
+
+D) Frontend API base excerpt:
+window.API_BASE = '/api';
+
+====================================================================
+16) HOW TO RUN (FOR DEMO/VIVA)
+====================================================================
+1. Install backend deps:
+   npm install --prefix backend
+
+2. Configure .env at project root
+
+3. Start server from project root:
+   node backend/server.js
+
+4. Open:
+   http://localhost:3000/
+   http://localhost:3000/admin
+   http://localhost:3000/student
+
+====================================================================
+17) REPORT TALKING POINTS (FOR PRESENTATION)
+====================================================================
+- Why vanilla stack was chosen (simple, inspectable, easy deployment)
+- How authentication and authorization are separated
+- How correction workflow improves data quality
+- How SMTP credentials are protected in DB
+- How scheduler uses DB-managed dispatch time
+- How codebase was modularized by feature/page for maintainability
+
+====================================================================
+18) POSSIBLE FUTURE ENHANCEMENTS
+====================================================================
+- Role constants centralization
+- API documentation via OpenAPI
+- Better unit/integration test coverage
+- Admin analytics dashboard
+- Multi-college tenant support
+- Background job monitoring and retries
+
+END OF REPORT
