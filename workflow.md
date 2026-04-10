@@ -1,63 +1,104 @@
-# Project Flow Diagram
+# Detailed Workflow Diagram
 
 ```mermaid
 flowchart TD
-    User[User] --> Home[Home /]
-    User --> Student[Student /student]
-    User --> Admin[Admin /admin]
+    Start([Start Application]) --> Boot[Load env and initialize Express]
+    Boot --> DBInit[Open SQLite and ensure tables + default settings]
+    DBInit --> RouteWire[Register static pages and API routes]
+    RouteWire --> StartCron[Start scheduler using DB auto_send_time]
+    StartCron --> Wait[System ready for requests]
 
-    Home --> H1[GET /api/birthdays/today]
-    Home --> H2[GET /api/birthdays/upcoming]
-    Home --> H3[GET /api/birthdays]
+    %% Public flow
+    Wait --> PublicAccess{Public user action}
+    PublicAccess -->|Open home| HomePage[Home page loads]
+    HomePage --> PubToday[GET /api/birthdays/today]
+    HomePage --> PubUpcoming[GET /api/birthdays/upcoming]
+    HomePage --> PubAll[GET /api/birthdays]
+    PubToday --> BirthdaysRead[(Read birthdays)]
+    PubUpcoming --> BirthdaysRead
+    PubAll --> BirthdaysRead
 
-    Student --> S1[GET /api/birthdays]
-    Student --> S2[POST /api/requests]
+    %% Student flow
+    Wait --> StudentAccess{Student action}
+    StudentAccess -->|View records| StuView[GET /api/birthdays]
+    StuView --> BirthdaysRead
+    StudentAccess -->|Raise correction| StuReq[POST /api/requests]
+    StuReq --> SaveReq[(Insert request with pending status)]
 
-    Admin --> L1[POST /api/login]
-    L1 --> JWT[JWT token]
+    %% Admin auth flow
+    Wait --> AdminAccess{Admin action}
+    AdminAccess --> AdminLogin[POST /api/login]
+    AdminLogin --> CredCheck{Credentials valid}
+    CredCheck -->|No| LoginFail[Return 401]
+    CredCheck -->|Yes| IssueJWT[Issue JWT token]
 
-    JWT --> A1[GET /api/birthdays/stats]
-    JWT --> A2[POST /api/birthdays]
-    JWT --> A3[PUT /api/birthdays/:id]
-    JWT --> A4[DELETE /api/birthdays/:id]
-    JWT --> A5[POST /api/birthdays/upload]
-    JWT --> A6[POST /api/birthdays/wish]
-    JWT --> A7[GET /api/requests]
-    JWT --> A8[PUT /api/requests/:id/status]
-    JWT --> A9[GET /api/settings]
-    JWT --> A10[PUT /api/settings/:key]
+    %% Admin authorized operations
+    IssueJWT --> AuthGate[requireAuth + requireAdmin]
+    AuthGate --> Ops{Choose operation}
 
-    PublicSend[POST /api/send-wishes] --> WishHandlers[backend/features/birthdays/wishHandlers.js]
+    Ops --> Stats[GET /api/birthdays/stats]
+    Stats --> BirthdaysRead
 
-    subgraph Backend
-      Server[backend/server.js]
-      Auth[backend/features/auth]
-      Birthdays[backend/features/birthdays]
-      Requests[backend/features/requests]
-      Settings[backend/features/settings]
-      DB[(SQLite)]
-      Scheduler[backend/scheduler.js]
-    end
+    Ops --> AddBday[POST /api/birthdays]
+    AddBday --> WriteBday[(Insert birthday)]
 
-    H1 --> Birthdays
-    H2 --> Birthdays
-    H3 --> Birthdays
-    S1 --> Birthdays
-    S2 --> Requests
-    A1 --> Birthdays
-    A2 --> Birthdays
-    A3 --> Birthdays
-    A4 --> Birthdays
-    A5 --> Birthdays
-    A6 --> Birthdays
-    A7 --> Requests
-    A8 --> Requests
-    A9 --> Settings
-    A10 --> Settings
+    Ops --> EditBday[PUT /api/birthdays/:id]
+    EditBday --> UpdateBday[(Update birthday)]
 
-    Auth --> DB
-    Birthdays --> DB
-    Requests --> DB
-    Settings --> DB
-    Scheduler --> DB
+    Ops --> DeleteBday[DELETE /api/birthdays/:id]
+    DeleteBday --> RemoveBday[(Delete birthday)]
+
+    Ops --> UploadXlsx[POST /api/birthdays/upload]
+    UploadXlsx --> ParseFile[Parse XLSX and validate rows]
+    ParseFile --> BulkWrite[(Bulk insert or skip invalid)]
+
+    Ops --> ManualWish[POST /api/birthdays/wish]
+    ManualWish --> MailReady{SMTP configured}
+    MailReady -->|No| ConfigErr[Return configuration error]
+    MailReady -->|Yes| TodayRows[(Query todays birthdays)]
+    TodayRows --> SendMail[Send emails using template]
+
+    Ops --> ViewReq[GET /api/requests]
+    ViewReq --> ReadReq[(Read requests)]
+
+    Ops --> UpdateReq[PUT /api/requests/:id/status]
+    UpdateReq --> WriteReq[(Update request status)]
+
+    Ops --> GetSettings[GET /api/settings]
+    GetSettings --> ReadSettings[(Read settings)]
+
+    Ops --> PutSetting[PUT /api/settings/:key]
+    PutSetting --> EncryptPass{key is email_pass}
+    EncryptPass -->|Yes| Encrypt[Encrypt before save]
+    EncryptPass -->|No| SavePlain[Save value]
+    Encrypt --> SaveSetting[(Upsert setting)]
+    SavePlain --> SaveSetting
+    SaveSetting --> Reschedule{key is auto_send_time}
+    Reschedule -->|Yes| RestartCron[Restart scheduler]
+    Reschedule -->|No| DoneReq[Return success]
+    RestartCron --> DoneReq
+
+    %% Scheduled flow
+    Wait --> CronTick{Cron trigger reached}
+    CronTick --> RunDaily[runDailyWishes]
+    RunDaily --> CronMailReady{SMTP configured}
+    CronMailReady -->|No| SkipRun[Skip with warning log]
+    CronMailReady -->|Yes| CronToday[(Query todays birthdays)]
+    CronToday --> CronSend[Send birthday emails]
+    CronSend --> CronLog[Log sent count]
 ```
+
+# Step-by-Step Workflow (Report Friendly)
+
+1. Server boots, loads environment variables, and connects to SQLite.
+2. Database tables are created or migrated: users, birthdays, requests, settings.
+3. Default settings such as email template and auto_send_time are ensured.
+4. Frontend pages are served at /, /student, and /admin.
+5. Public users can view today, upcoming, and full birthday lists.
+6. Students can submit correction requests to be reviewed by admins.
+7. Admin logs in, receives JWT, and performs protected operations.
+8. Admin manages birthdays, uploads Excel sheets, and sends manual wishes.
+9. Admin settings update SMTP credentials, template, and dispatch time.
+10. When auto_send_time changes, scheduler restarts with the new cron rule.
+11. Daily scheduler checks todays birthdays and sends emails automatically.
+12. Errors are returned as JSON for API routes and custom 404 is served for unknown pages.

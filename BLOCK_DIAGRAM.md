@@ -1,58 +1,100 @@
-# Birthday Reminder - Block Diagram
+# Birthday Reminder - Detailed Block Diagram
 
 ```mermaid
-flowchart TD
-    U[Users]
-    U1[Visitor]
-    U2[Student]
-    U3[Admin]
+flowchart TB
+    %% Actors
+    Visitor[Visitor]
+    Student[Student]
+    Admin[Admin]
 
-    FE[Frontend UI\nHTML + CSS + Vanilla JS]
-    P1[Home Page\n/index]
-    P2[Student Page\n/student]
-    P3[Admin Page\n/admin]
+    %% Frontend
+    subgraph FE[Frontend Layer - HTML CSS Vanilla JS]
+        Home[Home Page /]
+        StudentPage[Student Page /student]
+        AdminPage[Admin Page /admin]
+        ApiClient[JS API Client + Auth Helpers]
+    end
 
-    API[Express API Layer\nbackend/server.js]
+    %% Server entry
+    subgraph APP[Application Layer - Express]
+        Server[server.js\nStatic hosting + route wiring]
+        ErrorHandler[Global error handler + API 404]
+    end
 
-    A1[Auth Feature\n/api/login, /api/password]
-    A2[Birthdays Feature\nCRUD + today + upcoming + upload + wish]
-    A3[Requests Feature\ncreate + approve/reject]
-    A4[Settings Feature\nSMTP + template + auto_send_time]
+    %% Middleware
+    subgraph MW[Security and Access Control]
+        RequireAuth[requireAuth\nJWT validation]
+        RequireAdmin[requireAdmin\nrole check admin]
+    end
 
-    MID[Middleware\nJWT Auth + Admin Guard + Error Handler]
+    %% Feature modules
+    subgraph MOD[Feature Modules]
+        AuthMod[Auth Module\nPOST /api/login\nPUT /api/password]
+        BirthdaysMod[Birthdays Module\nGET /today /upcoming /\nGET /stats\nPOST /\nPUT /:id\nDELETE /:id\nPOST /upload\nPOST /wish]
+        RequestsMod[Requests Module\nPOST /api/requests\nGET /api/requests\nPUT /api/requests/:id/status]
+        SettingsMod[Settings Module\nGET /api/settings\nPUT /api/settings/:key]
+    end
 
-    DB[(SQLite Database\nusers, birthdays, requests, settings)]
+    %% Services
+    subgraph SVC[Background and Messaging Services]
+        Scheduler[scheduler.js\nnode-cron daily trigger]
+        Mailer[emailService + nodemailer]
+        Crypto[crypto util\nSMTP password encrypt/decrypt]
+    end
 
-    SCH[Scheduler\nnode-cron\nbackend/scheduler.js]
-    SMTP[SMTP Service\nGmail / SMTP]
+    %% Data
+    subgraph DBL[Data Layer - SQLite]
+        Users[(users)]
+        Birthdays[(birthdays)]
+        Requests[(requests)]
+        Settings[(settings)]
+    end
 
-    U --> U1
-    U --> U2
-    U --> U3
+    SMTP[(External SMTP Provider)]
+    Uploads[(uploads folder)]
 
-    U1 --> P1
-    U2 --> P2
-    U3 --> P3
+    %% Actor to frontend
+    Visitor --> Home
+    Student --> StudentPage
+    Admin --> AdminPage
 
-    P1 --> FE
-    P2 --> FE
-    P3 --> FE
+    %% Frontend to backend
+    Home --> ApiClient
+    StudentPage --> ApiClient
+    AdminPage --> ApiClient
+    ApiClient --> Server
+    Server --> ErrorHandler
 
-    FE --> API
+    %% Route access flow
+    Server --> AuthMod
+    Server --> BirthdaysMod
+    Server --> RequestsMod
+    Server --> SettingsMod
+    Server --> Scheduler
 
-    API --> MID
-    MID --> A1
-    MID --> A2
-    MID --> A3
-    MID --> A4
+    BirthdaysMod --> RequireAuth
+    RequestsMod --> RequireAuth
+    SettingsMod --> RequireAuth
+    BirthdaysMod --> RequireAdmin
+    RequestsMod --> RequireAdmin
+    SettingsMod --> RequireAdmin
 
-    A1 --> DB
-    A2 --> DB
-    A3 --> DB
-    A4 --> DB
+    %% Module to data
+    AuthMod --> Users
+    BirthdaysMod --> Birthdays
+    RequestsMod --> Requests
+    SettingsMod --> Settings
 
-    A2 --> SMTP
-    A4 --> SCH
-    SCH --> DB
-    SCH --> SMTP
+    %% Upload and mail flow
+    BirthdaysMod --> Uploads
+    BirthdaysMod --> Mailer
+    Scheduler --> Mailer
+    Scheduler --> Birthdays
+    Scheduler --> Settings
+    SettingsMod --> Scheduler
+
+    Mailer --> Crypto
+    SettingsMod --> Crypto
+    Crypto --> Settings
+    Mailer --> SMTP
 ```
