@@ -1,0 +1,508 @@
+/* --- 4. Student Gallery Grid & Panel Grids --- */
+.gallery-grid,
+.panel-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    justify-content: center;
+    gap: 24px;
+    padding: 8px;
+    perspective: 1200px;
+}
+
+.mini-card {
+    background: var(--glass-bg, rgba(255, 255, 255, 0.8));
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border, var(--gray-100));
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    transition: var(--transition-bounce);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    will-change: transform, box-shadow;
+    transform-style: preserve-3d;
+}
+
+.dark-theme .mini-card {
+    background: var(--glass-bg, var(--gray-50));
+    border-color: var(--glass-border, var(--gray-100));
+}
+
+.mini-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--gray-200);
+    box-shadow: var(--shadow-md);
+}
+
+.mini-card .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.mini-card .name {
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--gray-900);
+    line-height: 1.4;
+}
+
+.mini-card .dob-info {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--gray-500);
+    font-size: 12px;
+}
+
+.mini-card .dob-icon {
+    font-size: 14px;
+}
+
+.mini-card .card-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: auto;
+    padding-top: 12px;
+    border-top: 1px solid var(--gray-100);
+}
+
+.mini-card .action-btn {
+    padding: 6px 10px;
+    font-size: 12px;
+}
+
+
+/* ============================================================ */
+/*  SWIPE TO DELETE                                             */
+/* ============================================================ */
+
+.swipe-container {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--radius);
+    margin-bottom: 12px;
+}
+
+.swipe-background {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: var(--red);
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 24px;
+    color: white;
+    font-weight: bold;
+    opacity: 0;
+    transition: opacity 0.2s;
+    user-select: none;
+}
+
+.swipe-card {
+    position: relative;
+    z-index: 1;
+    background: var(--white);
+    /* Ensure it's opaque in light mode */
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    /* Touch actions */
+    touch-action: pan-y;
+    user-select: none;
+}
+
+.dark-theme .swipe-card {
+    background: var(--gray-50);
+    /* Opaque for dark mode */
+}
+
+/* We remove margin-bottom on the card itself since the container handles it */
+.swipe-container .card {
+    margin-bottom: 0;
+}
+
+/* --- 5. Premium Birthday Card (Unified Theme) --- */
+.premium-birthday-card {
+    background: var(--glass-bg, rgba(255, 255, 255, 0.7));
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.6));
+    border-radius: var(--radius-lg);
+    padding: 32px;
+    margin-bottom: 24px;
+    width: 100%;
+    box-shadow: var(--shadow-md);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 20px;
+    transition: transform 0.1s ease-out, box-shadow 0.3s ease, border-color 0.3s ease;
+    transform-style: preserve-3d;
+    animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    will-change: transform;
+}
+
+.premium-birthday-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--purple-light);
+}
+
+.premium-birthday-card .avatar-circle {
+    width: 84px;
+    height: 84px;
+    background: linear-gradient(135deg, var(--gray-50), var(--gray-100));
+    border: 2px solid var(--gray-100);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    font-weight: 600;
+    font-family: var(--font-mono);
+    color: var(--gray-400);
+    margin-bottom: 4px;
+    transition: transform 0.3s ease;
+}
+
+.premium-birthday-card:hover .avatar-circle {
+    transform: scale(1.1) rotate(5deg);
+}
+
+.premium-birthday-card .person-name {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--black);
+    letter-spacing: -0.5px;
+    margin-bottom: 4px;
+}
+
+.premium-birthday-card .person-details {
+    font-size: 14px;
+    font-family: var(--font-mono);
+    color: var(--gray-600);
+    margin-bottom: 12px;
+}
+
+.premium-birthday-card .age-badge {
+    background: var(--accent-soft);
+    color: var(--black);
+    padding: 6px 14px;
+    border-radius: 100px;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: var(--font-mono);
+    border: 1px solid var(--gray-100);
+}
+
+.wish-btn-container {
+    width: 100%;
+    margin-top: 12px;
+}
+
+.wish-btn {
+    width: 100%;
+    padding: 16px;
+    border-radius: var(--radius);
+    background: var(--black);
+    color: var(--white);
+    font-weight: 600;
+    font-size: 14px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: var(--shadow);
+}
+
+.dark-theme .wish-btn {
+    background: var(--white);
+    color: var(--black);
+}
+
+.wish-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    filter: brightness(1.1);
+}
+
+.wish-btn:active {
+    transform: scale(0.98);
+}
+
+/* --- Portal List Items (Unified Theme) --- */
+.list-row-grid {
+    display: grid;
+    /* Make columns more balanced so the center column appears visually centered.
+       Use an auto middle column and let the name column take remaining space. */
+    grid-template-columns: 1fr auto 140px;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+}
+
+.list-item {
+    background: var(--white);
+    border-radius: var(--radius-perfect);
+    margin: 8px 0 12px;
+    border: 1px solid var(--gray-100);
+    padding: 14px 20px;
+    transition: var(--transition-bounce);
+    animation: fadeUp 0.4s ease backwards;
+    box-sizing: border-box;
+    box-shadow: var(--shadow-sm);
+    transform-style: preserve-3d;
+    position: relative;
+    overflow: hidden;
+    will-change: transform, box-shadow;
+    width: calc(100% - 12px); /* account for container padding (6px each side) */
+    max-width: 100%;
+    background: var(--gray-50);
+}
+
+/* Center the middle column (date) inside the grid cell to ensure perfect visual centering */
+.list-row-grid > *:nth-child(2) {
+    justify-self: center;
+    text-align: center;
+}
+
+.list-item:hover {
+    background: var(--glass-bg, rgba(255, 255, 255, 0.9));
+    border-color: var(--gray-200);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow);
+}
+
+.list-item:last-child {
+    margin-bottom: 0;
+}
+
+.badge-today {
+    background-color: var(--gray-100);
+    color: var(--gray-800);
+    border: 1px solid var(--gray-200);
+}
+
+/* ============================================================ */
+/*  UI ENHANCEMENTS: TOASTS, EMPTY STATES, FAB, TOOLTIPS        */
+/* ============================================================ */
+
+/* --- TOAST NOTIFICATIONS --- */
+.toast-container {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    pointer-events: none;
+}
+
+.toast {
+    background-color: var(--black);
+    color: var(--white);
+    padding: 14px 24px;
+    border-radius: var(--radius-lg);
+    font-size: 14px;
+    font-weight: 500;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transform: translateY(100px);
+    opacity: 0;
+    animation: slideUpFade 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    pointer-events: auto;
+}
+
+.toast.success {
+    border-left: 4px solid var(--green);
+}
+
+.toast.error {
+    border-left: 4px solid var(--red);
+}
+
+.toast.info {
+    border-left: 4px solid var(--blue);
+}
+
+.toast.hiding {
+    animation: fadeOutDown 0.3s ease forwards;
+}
+
+@keyframes slideUpFade {
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOutDown {
+    to {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+}
+
+/* --- EMPTY STATES --- */
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 64px 24px;
+    text-align: center;
+    background-color: var(--glass-bg, rgba(255, 255, 255, 0.4));
+    border: 2px dashed var(--glass-border, var(--gray-200));
+    border-radius: var(--radius-lg);
+    margin: 32px 0;
+    animation: fadeUp 0.6s ease forwards;
+    transition: background-color 0.4s ease, border-color 0.4s ease;
+}
+
+.empty-state-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+    opacity: 0.8;
+    animation: floatUpDown 4s ease-in-out infinite;
+}
+
+.empty-state h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--black);
+    margin-bottom: 8px;
+}
+
+.empty-state p {
+    font-size: 14px;
+    color: var(--gray-600);
+    max-width: 300px;
+    margin-bottom: 24px;
+}
+
+@keyframes floatUpDown {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+/* --- FAB (Floating Action Button) --- */
+.fab {
+    display: none;
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: var(--black);
+    color: var(--white);
+    font-size: 32px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    z-index: 900;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: none;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.fab:hover {
+    transform: translateY(-4px) scale(1.05);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
+    background-color: #2a2a26;
+}
+
+.fab:active {
+    transform: scale(0.9);
+}
+
+@media (max-width: 768px) {
+    .fab {
+        display: flex;
+        animation: scaleUpFade 0.5s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+        animation-delay: 0.5s;
+    }
+}
+
+@keyframes scaleUpFade {
+    from {
+        transform: scale(0);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* --- CUSTOM TOOLTIPS --- */
+[data-tooltip] {
+    position: relative;
+    cursor: help;
+}
+
+[data-tooltip]::before {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    background-color: #1a1a1a;
+    color: #ffffff;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 1001;
+    border: 1px solid #333;
+}
+
+[data-tooltip]:hover::before {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-8px);
+}
+
+/* --- SCRATCH OFF --- */
+.scratch-container {
+    position: relative;
+    display: inline-block;
+    cursor: crosshair;
+    background: var(--gray-100);
+    border-radius: 4px;
+    overflow: hidden;
+    color: var(--black);
+    font-weight: bold;
+}
+
+.scratch-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    cursor: crosshair;
+}
+

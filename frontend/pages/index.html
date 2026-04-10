@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - Birthday Reminder</title>
+    <meta name="description" content="View today's birthdays and upcoming celebrations at your college/institution.">
+    <link rel="stylesheet" href="/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+</head>
+
+<body class="dark-theme">
+
+    <!-- Ambient Background Blobs -->
+    <div class="mesh-bg">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+    </div>
+
+    <!-- Header Navigation -->
+    <header class="topnav">
+        <div class="topnav-logo">Birthday Reminder</div>
+        <nav class="nav-menu">
+            <a href="/" class="nav-link active">Home</a>
+            <a href="/admin" class="nav-link">Admin Panel</a>
+            <a href="/student" class="nav-link">Student Panel</a>
+            <button id="themeToggleBtn" aria-label="Toggle Dark Mode"></button>
+        </nav>
+    </header>
+
+    <!-- Hero Greeting -->
+    <div class="hero-wrapper">
+        <h1 class="hero-title" id="dynamicGreeting">Good Evening!</h1>
+        <p class="hero-subtitle">Bringing life to campus celebrations with a modern touch.</p>
+    </div>
+
+    <!-- Main Dashboard -->
+    <main class="main-content" style="padding-top: 0;">
+        <div class="container fade-in">
+            <div class="ideas-container">
+
+                <!-- LEFT COLUMN: Milestones + Birthday Wall -->
+                <div style="display: flex; flex-direction: column; gap: 32px;">
+
+                    <!-- 0. Quick Stats -->
+                    <section style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;">
+                        <div class="glass-card" style="padding: 20px; text-align: center;">
+                            <h3 id="stat-today" class="stat-value" style="font-size: 2.5rem; margin-bottom: 4px; line-height: 1;">0</h3>
+                            <p style="font-size: 0.75rem; color: var(--gray-400); text-transform: uppercase; letter-spacing: 1px; font-weight: 600;">Today's Birthdays</p>
+                        </div>
+                        <div class="glass-card" style="padding: 20px; text-align: center;">
+                            <h3 id="stat-month" class="stat-value" style="font-size: 2.5rem; margin-bottom: 4px; line-height: 1;">0</h3>
+                            <p style="font-size: 0.75rem; color: var(--gray-400); text-transform: uppercase; letter-spacing: 1px; font-weight: 600;">This Month</p>
+                        </div>
+                        <div class="glass-card" style="padding: 20px; text-align: center;">
+                            <h3 id="stat-total" class="stat-value" style="font-size: 2.5rem; margin-bottom: 4px; line-height: 1;">0</h3>
+                            <p style="font-size: 0.75rem; color: var(--gray-400); text-transform: uppercase; letter-spacing: 1px; font-weight: 600;">Total Students</p>
+                        </div>
+                    </section>
+
+                    <!-- 1. Today's Birthday Wall -->
+                    <section>
+                        <header class="page-header" style="margin-bottom: 20px; padding-bottom: 0; border-bottom: none;">
+                            <span class="section-label">Live Feed</span>
+                            <h2 style="font-size: 1.25rem; font-weight: 700;">Today's Birthday Wall</h2>
+                        </header>
+                        <div class="card-list" id="home-birthdays-list">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </section>
+
+                    <!-- 2. Milestone Carousel -->
+                    <section>
+                        <header class="page-header" style="margin-bottom: 20px; padding-bottom: 0; border-bottom: none;">
+                            <span class="section-label">Milestone Events</span>
+                            <h2 style="font-size: 1.25rem; font-weight: 700;">Upcoming Birthdays</h2>
+                        </header>
+                        <div class="milestone-strip" id="milestone-carousel">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </section>
+
+                </div>
+
+                <!-- RIGHT COLUMN: Calendar + Pulse + Actions -->
+                <div style="display: flex; flex-direction: column; gap: 24px;">
+
+                    <!-- 3. Mini Calendar -->
+                    <section class="glass-card mini-calendar">
+                        <div class="calendar-header">
+                            <span style="font-weight: 700;" id="calendar-month-year">March 2026</span>
+                            <span style="font-size: 10px; color: var(--gray-400);">MON • SUN</span>
+                        </div>
+                        <div class="calendar-grid" id="calendar-grid">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </section>
+
+                    <!-- 4. QUICK ACTIONS -->
+                    <section class="glass-card" id="todays-actions-card">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 8px;">
+                            <span class="section-label" style="margin-bottom: 0;">QUICK ACTIONS</span>
+                            <span style="font-size:16px;">🔔</span>
+                        </div>
+                        <div id="todays-actions-content" style="display:flex; flex-direction:column; gap:10px;"></div>
+                    </section>
+
+                    <!-- 5. Quick Actions -->
+                    <section class="action-grid-v2">
+                        <a href="/student" class="premium-btn-tile">
+                            <i data-feather="edit-3"></i>
+                            <span>Update My DOB</span>
+                        </a>
+                        <div class="premium-btn-tile">
+                            <i data-feather="users"></i>
+                            <span id="total-student-count">All Depts</span>
+                        </div>
+                    </section>
+
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="/js/core/ui/notifications.js"></script>
+    <script src="/js/core/ui/theme.js"></script>
+    <script src="/js/core/ui/motion.js"></script>
+    <script src="/js/core/ui/runtime.js"></script>
+    <script src="/js/core/ui/init.js"></script>
+    <script src="/js/core/api/shared.js"></script>
+    <script src="/js/core/api/auth.js"></script>
+    <script src="/js/core/api/birthdays.js"></script>
+    <script src="/js/core/api/requests.js"></script>
+    <script src="/js/core/api/settings.js"></script>
+    <script src="/js/pages/home.js"></script>
+
+</body>
+
+</html>

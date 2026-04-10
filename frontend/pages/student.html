@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Panel - Birthday Reminder</title>
+    <meta name="description" content="Search for student birthdays or submit a correction ticket as a student.">
+    <link rel="stylesheet" href="/style.css">
+</head>
+
+<body class="dark-theme">
+
+    <!-- Ambient Background Blobs -->
+    <div class="mesh-bg">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+    </div>
+
+    <!-- Header Navigation -->
+    <header class="topnav">
+        <div class="topnav-logo">Birthday Reminder</div>
+        <nav class="nav-menu">
+            <a href="/" class="nav-link">Home</a>
+            <a href="/admin" class="nav-link">Admin Panel</a>
+            <a href="/student" class="nav-link active">Student Panel</a>
+            <button id="themeToggleBtn" aria-label="Toggle Dark Mode"></button>
+            <!-- Student panel is public; no account actions shown -->
+        </nav>
+    </header>
+
+    <!-- Panel View (Student Panel loads directly, no login required) -->
+    <main class="main-content" id="panel-view" style="display: block;">
+        <div class="container fade-in">
+
+            <header class="page-header">
+                <span class="section-label">Portal</span>
+                <h1 class="page-title">Student Panel</h1>
+                <p class="page-description">Find student birthdays or request an edit if your info is wrong.</p>
+            </header>
+
+            <div style="display: flex; gap: 32px; flex-wrap: wrap; align-items: flex-start;">
+
+                <!-- Left: Birthday List -->
+                <div class="glass-card" style="flex: 2; min-width: 400px;">
+                    <div class="flex-between mb-24">
+                        <h2 style="font-size: 18px; font-weight: 600;">All Birthdays</h2>
+                        <input type="text" id="search-input" class="form-input" placeholder="Search by name or department..."
+                            style="width: 200px;" oninput="filterStudentBirthdays()">
+                    </div>
+
+                    <div id="student-birthdays-list" class="scrollable-list-container">
+                        <!-- Dynamically populated -->
+                    </div>
+                </div>
+
+                <!-- Right: Correction Ticket Form -->
+                <div class="glass-card" style="flex: 1; min-width: 300px; height: fit-content;">
+                    <h2 style="font-size: 18px; font-weight: 600; margin-bottom: 8px;">Submit Correction Ticket</h2>
+                    <p style="font-size: 13px; color: var(--gray-600); margin-bottom: 24px;">Submit a ticket to the
+                        Administrator. If approved, your birthday will be formally added or updated in the system.</p>
+
+                    <form onsubmit="event.preventDefault(); submitRequest(event);">
+                        <div class="form-group">
+                            <label class="form-label">Your Name</label>
+                            <input type="text" id="request-name" class="form-input" placeholder="Full name" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Correct Date of Birth</label>
+                            <input type="date" id="request-dob" class="form-input" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Your Email</label>
+                            <input type="email" id="request-email" class="form-input" placeholder="student@example.com"
+                                required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Department</label>
+                            <select id="request-dept" class="form-input">
+                                <option value="">— Select Department —</option>
+                                <option value="Computer">Computer</option>
+                                <option value="CSE AIML">CSE AIML</option>
+                                <option value="ENTC">ENTC</option>
+                                <option value="Mech">Mech</option>
+                                <option value="Chem">Chem</option>
+                                <option value="Civil">Civil</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Note (Optional)</label>
+                            <textarea id="request-note" class="form-input" placeholder="Explain what is incorrect..."
+                                rows="2"></textarea>
+                        </div>
+
+                        <p id="request-status" style="display:none; font-size:13px; margin-top:8px; font-weight:500;">
+                        </p>
+
+                        <button type="submit" class="btn btn-submit" style="width: 100%; margin-top: 8px;">Submit
+                            Ticket for Review</button>
+                    </form>
+                </div>
+
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Password modal removed from Student view (admin retains change-password functionality in Admin panel) -->
+
+    <!-- Scripts: split ui + split api, then page logic (no student auth) -->
+    <script src="/js/core/ui/notifications.js"></script>
+    <script src="/js/core/ui/theme.js"></script>
+    <script src="/js/core/ui/motion.js"></script>
+    <script src="/js/core/ui/runtime.js"></script>
+    <script src="/js/core/ui/init.js"></script>
+    <script src="/js/core/api/shared.js"></script>
+    <script src="/js/core/api/auth.js"></script>
+    <script src="/js/core/api/birthdays.js"></script>
+    <script src="/js/core/api/requests.js"></script>
+    <script src="/js/core/api/settings.js"></script>
+    <script src="/js/pages/student.js"></script>
+
+
+</body>
+
+</html>

@@ -145,34 +145,50 @@ reminder/
 │   ├── config/
 │   │   ├── db.js                # SQLite connection & schema, initial seeding
 │   │   └── defaultTemplate.js   # Default birthday HTML template
-│   ├── controllers/
-│   │   ├── authController.js
-│   │   ├── birthdayController.js
-│   │   ├── requestController.js
-│   │   └── settingsController.js
+│   ├── features/
+│   │   ├── auth/
+│   │   │   ├── controller.js
+│   │   │   └── routes.js
+│   │   ├── birthdays/
+│   │   │   ├── controller.js
+│   │   │   └── routes.js
+│   │   ├── requests/
+│   │   │   ├── controller.js
+│   │   │   └── routes.js
+│   │   └── settings/
+│   │       ├── controller.js
+│   │       └── routes.js
 │   ├── middleware/
 │   │   ├── authMiddleware.js   # requireAuth, requireAdmin
 │   │   └── errorHandler.js
-│   ├── routes/
-│   │   ├── authRoutes.js
-│   │   ├── birthdayRoutes.js
-│   │   ├── requestRoutes.js
-│   │   └── settingsRoutes.js
+│   ├── utils/
+│   │   └── crypto.js
 │   ├── scheduler.js            # node-cron auto-send job
 │   └── server.js               # Express server entrypoint
 │
 ├── frontend/
-│   ├── index.html              # Home page
-│   ├── admin.html              # Admin panel (requires login)
-│   ├── student.html            # Student panel (public)
-│   ├── style.css
+│   ├── pages/
+│   │   ├── index.html          # Home page
+│   │   ├── admin.html          # Admin panel (requires login)
+│   │   ├── student.html        # Student panel (public)
+│   │   └── 404.html            # Not-found page
+│   ├── style.css               # CSS entrypoint
+│   ├── styles/
+│   │   ├── shared/
+│   │   │   └── tokens-layout.css
+│   │   ├── features/
+│   │   │   └── components.css
+│   │   └── pages/
+│   │       └── home-v2.css
 │   └── js/
-│       ├── api.js              # centralized fetch helpers
-│       ├── auth.js             # admin auth + session helpers
-│       ├── home.js             # home-page logic
-│       ├── admin.js            # admin panel logic
-│       ├── student.js          # student panel logic
-│       └── ui-utils.js         # toasts, theme toggles, helpers
+│       ├── core/
+│       │   ├── api.js          # centralized fetch helpers
+│       │   ├── auth.js         # admin auth + session helpers
+│       │   └── ui-utils.js     # toasts, theme toggles, helpers
+│       └── pages/
+│           ├── home.js         # home-page logic
+│           ├── admin.js        # admin panel logic
+│           └── student.js      # student panel logic
 │
 ├── uploads/                    # temporary uploaded files
 ├── database.db                 # SQLite file (created on first run)

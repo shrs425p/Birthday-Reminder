@@ -42,21 +42,23 @@ backend/
     db.js                        # SQLite initialization, schema creation, seed admin, migrations
     defaultTemplate.js           # Default HTML email template
 
-  controllers/
-    authController.js            # Login and change password handlers (JWT + bcrypt)
-    birthdayController.js        # Birthday CRUD, stats, upload, and SMTP send logic
-    requestController.js         # Correction ticket create, list, approve/reject
-    settingsController.js        # Settings get/update and scheduler trigger
+  features/
+    auth/
+      controller.js              # Login and change password handlers (JWT + bcrypt)
+      routes.js                  # /api login and password routes
+    birthdays/
+      controller.js              # Birthday CRUD, stats, upload, and SMTP send logic
+      routes.js                  # /api/birthdays routes (public + admin)
+    requests/
+      controller.js              # Correction ticket create, list, approve/reject
+      routes.js                  # /api/requests routes (public create, admin manage)
+    settings/
+      controller.js              # Settings get/update and scheduler trigger
+      routes.js                  # /api/settings routes (admin-only)
 
   middleware/
     authMiddleware.js            # JWT verification and admin guard
     errorHandler.js              # Global Express error handler
-
-  routes/
-    authRoutes.js                # /api login and password routes
-    birthdayRoutes.js            # /api/birthdays routes (public + admin)
-    requestRoutes.js             # /api/requests routes (public create, admin manage)
-    settingsRoutes.js            # /api/settings routes (admin-only)
 
   uploads/                        # Temporary upload destination for XLSX/CSV imports
 
@@ -64,19 +66,30 @@ backend/
     crypto.js                    # AES-256-CBC encrypt/decrypt for SMTP credentials
 
 frontend/
-  404.html                       # Custom not-found page and mascot animation
-  admin.html                     # Admin login and panel UI
-  index.html                     # Public Home page UI
-  student.html                   # Public Student panel UI
-  style.css                      # Global styles, themes, animations
+  pages/
+    404.html                     # Custom not-found page and mascot animation
+    admin.html                   # Admin login and panel UI
+    index.html                   # Public Home page UI
+    student.html                 # Public Student panel UI
+
+  style.css                      # CSS entrypoint (imports split style parts)
+  styles/
+    shared/
+      tokens-layout.css          # Design tokens and shared layout styles
+    features/
+      components.css             # Shared component styles
+    pages/
+      home-v2.css                # Home-page-specific style blocks
 
   js/
-    admin.js                     # Admin panel logic: tabs, CRUD, requests, settings
-    api.js                       # Centralized fetch helpers for all API calls
-    auth.js                      # Admin login, logout, session restore, password change
-    home.js                      # Home page data fetch and UI rendering
-    student.js                   # Student panel list and correction form logic
-    ui-utils.js                  # UI utilities (toast, themes, animations)
+    core/
+      api.js                     # Centralized fetch helpers for all API calls
+      auth.js                    # Admin login, logout, session restore, password change
+      ui-utils.js                # UI utilities (toast, themes, animations)
+    pages/
+      admin.js                   # Admin panel logic: tabs, CRUD, requests, settings
+      home.js                    # Home page data fetch and UI rendering
+      student.js                 # Student panel list and correction form logic
 ```
 
 ---
@@ -88,7 +101,7 @@ frontend/
 3. `backend/scheduler.js` starts the daily cron scheduler (default 08:00 IST).
 
 ### Public Home page flow
-1. User opens `/` (served from `frontend/index.html`).
+1. User opens `/` (served from `frontend/pages/index.html`).
 2. `frontend/js/home.js` calls:
    - `GET /api/birthdays/today` for today’s list and stats.
    - `GET /api/birthdays/upcoming` for next 7 days.

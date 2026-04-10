@@ -1,0 +1,120 @@
+    border-color: var(--green) !important;
+}
+
+.dark-theme .btn-primary, .dark-theme .btn-submit {
+    background-color: var(--green) !important;
+    color: var(--white) !important;
+    border-color: var(--green) !important;
+}
+
+:root {
+    /* V2 PREMIUM TOKENS (Light) */
+    --glass-bg-lite: rgba(255, 255, 255, 0.4);
+    --glass-border-lite: rgba(255, 255, 255, 0.2);
+    --glass-shadow-lite: 0 8px 32px rgba(31, 38, 135, 0.07);
+    --premium-green-lite: #2d6a4f;
+    --spark-glow-lite: 0 0 20px rgba(74, 222, 128, 0.3);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* --- CUSTOM SCROLLBAR & SELECTION --- */
+/* Hide scrollbar completely but allow scrolling */
+::-webkit-scrollbar {
+    width: 0px;
+    height: 0px;
+    display: none;
+}
+
+body {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+}
+
+::selection {
+    background-color: var(--gray-200);
+    color: var(--black);
+}
+
+/* --- TOP LOADING BAR --- */
+.top-loading-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(to right, var(--blue), var(--green), var(--amber));
+    background-size: 200% 100%;
+    z-index: 9999;
+    transform-origin: left;
+    transform: scaleX(0);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.top-loading-bar.active {
+    opacity: 1;
+    animation: loadingBarProgress 2s cubic-bezier(0.1, 0.8, 0.3, 1) infinite, gradientFlow 2s linear infinite;
+}
+
+@keyframes loadingBarProgress {
+    0% {
+        transform: scaleX(0);
+    }
+
+    50% {
+        transform: scaleX(0.7);
+    }
+
+    100% {
+        transform: scaleX(1);
+    }
+}
+
+body {
+    font-family: var(--font-sans);
+    background-color: var(--off-white);
+    background-image: radial-gradient(var(--bg-dot-color, var(--gray-200)) 1px, transparent 1px);
+    background-size: 24px 24px;
+    color: var(--black);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+.font-mono {
+    font-family: var(--font-mono);
+}
+
+/* --- LAYOUT --- */
+.topnav {
+    background-color: var(--glass-bg, rgba(255, 255, 255, 0.85));
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--gray-100);
+    padding: 0 36px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    transition: background-color 0.4s ease, border-color 0.4s ease;
+}
+
+.topnav-logo {
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: -0.5px;
+    margin-right: auto;
+}
+
+.nav-menu {
+    display: flex;
+    gap: 8px;

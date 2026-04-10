@@ -5,11 +5,11 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 
-const authRoutes = require('./routes/authRoutes');
-const birthdayRoutes = require('./routes/birthdayRoutes');
-const requestRoutes = require('./routes/requestRoutes');
-const settingsRoutes = require('./routes/settingsRoutes');
-const { sendTodayBirthdayWishes } = require('./controllers/birthdayController');
+const authRoutes = require('./features/auth/routes');
+const birthdayRoutes = require('./features/birthdays/routes');
+const requestRoutes = require('./features/requests/routes');
+const settingsRoutes = require('./features/settings/routes');
+const { sendTodayBirthdayWishes } = require('./features/birthdays/controller');
 const errorHandler = require('./middleware/errorHandler');
 
 const app = express();
@@ -28,8 +28,9 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, '../frontend')));
 
 // ── Clean URL aliases (no .html extension needed) ────────────
-app.get('/admin', (req, res) => res.sendFile(path.join(__dirname, '../frontend/admin.html')));
-app.get('/student', (req, res) => res.sendFile(path.join(__dirname, '../frontend/student.html')));
+app.get('/', (req, res) => res.sendFile(path.join(__dirname, '../frontend/pages/index.html')));
+app.get('/admin', (req, res) => res.sendFile(path.join(__dirname, '../frontend/pages/admin.html')));
+app.get('/student', (req, res) => res.sendFile(path.join(__dirname, '../frontend/pages/student.html')));
 
 // ── API Routes ───────────────────────────────────────────────
 app.use('/api', authRoutes);
@@ -47,7 +48,7 @@ app.use((req, res, next) => {
         return next(err);
     }
     // For browser navigation, serve the custom 404 HTML page
-    res.status(404).sendFile(path.join(__dirname, '../frontend/404.html'));
+    res.status(404).sendFile(path.join(__dirname, '../frontend/pages/404.html'));
 });
 
 // ── Global Error Handler ─────────────────────────────────────

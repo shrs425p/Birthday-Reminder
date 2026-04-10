@@ -1,0 +1,180 @@
+/* --- BADGES --- */
+.badge {
+    border-radius: 99px;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    display: inline-block;
+    margin-left: 8px;
+    vertical-align: middle;
+}
+
+.badge-today {
+    background-color: var(--green-soft);
+    color: var(--green);
+}
+
+.badge-soon {
+    background-color: var(--amber-soft);
+    color: var(--amber);
+}
+
+.badge-normal {
+    background-color: var(--gray-100);
+    color: var(--gray-600);
+}
+
+/* --- FORM INPUTS --- */
+.form-group {
+    margin-bottom: 16px;
+    transition: transform 0.2s ease;
+}
+
+.form-group:focus-within {
+    transform: translateY(-2px);
+}
+
+.form-label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--gray-600);
+    margin-bottom: 8px;
+    transition: color 0.3s ease;
+}
+
+.form-group:focus-within .form-label {
+    color: var(--black);
+    font-weight: 600;
+}
+
+.form-input {
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-sm);
+    padding: 12px 16px;
+    font-size: 14px;
+    font-family: var(--font-sans);
+    width: 100%;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    outline: none;
+    color: var(--black);
+    background-color: var(--glass-bg, rgba(255, 255, 255, 0.8));
+}
+
+/* Dark theme: make form inputs blend with glass cards on admin/student pages */
+.dark-theme .form-input {
+    background-color: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    color: var(--gray-800);
+}
+
+.form-input::placeholder {
+    color: var(--gray-400);
+}
+
+.form-input:focus {
+    border-color: var(--black);
+    box-shadow: 0 0 0 4px var(--gray-100);
+    background-color: var(--white);
+    transform: translateY(-2px);
+}
+
+/* --- TABLE HOVER --- */
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table th,
+table td {
+    border: 1px solid var(--gray-200);
+    padding: 10px;
+}
+
+table tbody tr:hover {
+    background: var(--gray-50);
+}
+
+/* --- UTILS --- */
+.flex-between {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.mt-32 {
+    margin-top: 32px;
+}
+
+.mb-24 {
+    margin-bottom: 24px;
+}
+
+/* --- ANIMATIONS --- */
+.fade-in {
+    animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(16px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes gradientFlow {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+@keyframes shimmerWipe {
+    0% {
+        left: -100%;
+    }
+
+    100% {
+        left: 200%;
+    }
+}
+
+/* Page load transition */
+body {
+    animation: fadeIn 0.4s ease-out;
+}
+
+/* Stat chip animations */
+.stat-chip {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.stat-chip:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+}
+

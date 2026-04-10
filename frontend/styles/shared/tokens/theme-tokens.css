@@ -1,0 +1,120 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap');
+
+:root {
+    --text-primary: #1a1a1a;
+    --white: #ffffff;
+    --off-white: #f8f8f6;
+    --gray-50: #f5f5f4;
+    --gray-100: #e8e8e5;
+    --gray-200: #d4d4cf;
+    --gray-400: #9c9c96;
+    --gray-600: #6b6b65;
+    --gray-800: #2d2d28;
+    --black: #141410;
+    --accent-soft: #f0f0ec;
+
+    --green: #f59e0b;
+    --green-soft: #fbbf24;
+    --green-dark: #d97706;
+    --red: #9b2226;
+    --red-soft: #fde8e8;
+    --amber: #f59e0b;
+    --amber-soft: #fbbf24;
+    --blue: #1d3557;
+    --blue-soft: #e8f0fe;
+
+    --font-sans: 'DM Sans', sans-serif;
+    --font-mono: 'DM Mono', monospace;
+    --radius-sm: 8px;
+    --radius: 12px;
+    --radius-lg: 16px;
+    --radius-perfect: 20px;
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+    --shadow: 0 4px 12px rgba(0, 0, 0, 0.06), 0 2px 4px rgba(0, 0, 0, 0.04);
+    --shadow-md: 0 12px 24px rgba(0, 0, 0, 0.08), 0 4px 8px rgba(0, 0, 0, 0.04);
+    --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.12), 0 8px 16px rgba(0, 0, 0, 0.06);
+
+    /* Unified Transitions */
+    --transition-fast: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.dark-theme {
+    --text-primary: #ffffff;
+    --white: #141410;
+    --off-white: #1a1a16;
+    --gray-50: #22221d;
+    --gray-100: #2d2d28;
+    --gray-200: #4a4a42;
+    --gray-400: #82827a;
+    --gray-600: #a3a39e;
+    --gray-800: #d4d4cf;
+    --black: #ffffff;
+    --accent-soft: #2d2d28;
+
+    --green: #f59e0b;
+    --green-soft: rgba(251, 191, 36, 0.15);
+    --green-dark: #d97706;
+    --red: #f87171;
+    --red-soft: rgba(248, 113, 113, 0.15);
+    --amber: #f59e0b;
+    --amber-soft: rgba(251, 191, 36, 0.15);
+    --blue: #60a5fa;
+    --blue-soft: rgba(96, 165, 250, 0.15);
+
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.2), 0 1px 2px rgba(0, 0, 0, 0.1);
+    --shadow: 0 4px 12px rgba(0, 0, 0, 0.3), 0 2px 4px rgba(0, 0, 0, 0.15);
+    --shadow-md: 0 12px 24px rgba(0, 0, 0, 0.4), 0 4px 8px rgba(0, 0, 0, 0.2);
+    --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.5), 0 8px 16px rgba(0, 0, 0, 0.25);
+
+    /* Dark mode specific adjustments for background effects */
+    --bg-dot-color: rgba(255, 255, 255, 0.05);
+    --glass-bg: rgba(26, 26, 22, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.08);
+
+    /* Spotlight Glow Colors */
+    --spotlight-color: rgba(255, 255, 255, 0.06);
+
+    /* V2 PREMIUM TOKENS */
+    --glass-bg: rgba(26, 26, 22, 0.6);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    --premium-green: #f59e0b;
+    --spark-glow: 0 0 20px rgba(251, 191, 36, 0.2);
+}
+
+/* Stronger glass contrast for panel cards & lists in dark theme */
+.dark-theme .glass-card,
+.dark-theme .scrollable-list-container,
+.dark-theme .card,
+.dark-theme .mini-card,
+.dark-theme .premium-birthday-card {
+    background: rgba(20,20,18,0.45) !important;
+    border-color: rgba(255,255,255,0.06) !important;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.6) !important;
+}
+
+/* Make list items slightly darker and remove pale backgrounds */
+.dark-theme .list-item,
+.dark-theme .bday-card,
+.dark-theme .bday-card-v2,
+.dark-theme .birthday-card-v2 {
+    background: rgba(0,0,0,0.28) !important;
+    border-color: rgba(255,255,255,0.04) !important;
+}
+
+/* Inputs inside panels should be subtle but readable */
+.dark-theme .form-input,
+.dark-theme input.form-input,
+.dark-theme select.form-input,
+.dark-theme textarea.form-input {
+    background-color: rgba(255,255,255,0.02) !important;
+    border: 1px solid rgba(255,255,255,0.04) !important;
+    color: var(--gray-800) !important;
+}
+
+/* Ensure buttons remain visible */
+.btn-primary, .btn-submit {
+    background-color: var(--green) !important;
+    color: var(--white) !important;

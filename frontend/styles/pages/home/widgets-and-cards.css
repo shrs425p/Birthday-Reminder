@@ -1,0 +1,200 @@
+}
+
+.birthday-empty-state {
+    text-align: center;
+    padding: 48px 24px;
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    border: 1px dashed var(--gray-200);
+}
+
+.birthday-empty-icon {
+    font-size: 3rem;
+    margin-bottom: 12px;
+}
+
+.birthday-empty-state h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--black);
+    margin-bottom: 6px;
+}
+
+.birthday-empty-state p {
+    font-size: 0.875rem;
+    color: var(--gray-600);
+}
+
+/* Dark mode overrides for bday cards */
+[data-theme="dark"] .bday-card {
+    background: rgba(255,255,255,0.04);
+    border-color: rgba(255,255,255,0.08);
+    border-left-color: rgba(255,255,255,0.3);
+}
+
+[data-theme="dark"] .bday-avatar {
+    background: var(--gray-50);
+    border-color: var(--gray-100);
+}
+
+[data-theme="dark"] .birthday-empty-state {
+    background: rgba(255,255,255,0.03);
+    border-color: rgba(255,255,255,0.08);
+}
+
+/* Milestone badge — white/translucent on dark milestone card */
+.badge-milestone {
+    background: rgba(255,255,255,0.15);
+    color: white;
+    border: 1px solid rgba(255,255,255,0.25);
+    margin-left: 0;
+    display: inline-block;
+}
+
+
+.glass-card {
+    background: var(--glass-bg, var(--glass-bg-lite));
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid var(--glass-border, var(--glass-border-lite));
+    border-radius: var(--radius-perfect);
+    box-shadow: var(--glass-shadow, var(--glass-shadow-lite));
+    padding: 32px;
+    transition: var(--transition-bounce);
+    position: relative;
+    overflow: hidden;
+}
+
+.glass-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 48px rgba(31, 38, 135, 0.12);
+}
+
+.hero-wrapper {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 60px 20px 80px;
+    position: relative;
+}
+
+.hero-title {
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    font-weight: 800;
+    letter-spacing: -2px;
+    background: linear-gradient(135deg, var(--black), var(--green));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 16px;
+    line-height: 1;
+}
+
+.hero-subtitle {
+    font-size: 1.125rem;
+    color: var(--gray-600);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* TODAY'S ACTIONS */
+#todays-actions-card {
+    border: 1px solid var(--gray-100);
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    padding: 16px;
+}
+
+#todays-actions-content .action-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 12px;
+    border: 1px solid var(--gray-100);
+    border-radius: var(--radius-sm);
+    background: var(--glass-bg, rgba(255,255,255,0.03));
+    font-size: 14px !important;
+    color: var(--text-primary) !important;
+    opacity: 1 !important;
+    overflow: visible !important;
+    white-space: normal !important;
+}
+#todays-actions-content .action-row span {
+    color: var(--text-primary) !important;
+    font-size: 14px !important;
+    line-height: 1.3 !important;
+    opacity: 1 !important;
+    text-overflow: clip;
+    overflow: visible !important;
+    white-space: normal !important;
+}
+
+.send-wish-card-btn {
+    background: var(--green);
+    color: white;
+    border: 1px solid var(--green);
+    border-radius: 8px;
+    padding: 4px 8px;
+    font-size: 12px;
+    cursor: pointer;
+    align-self: flex-end;
+}
+
+.send-wish-card-btn:hover:not(:disabled) {
+    background: var(--green-dark);
+    border-color: var(--green-dark);
+}
+
+.send-wish-card-btn:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+}
+/* Ensure action-row spans inherit text-primary */
+#todays-actions-content .action-row span {
+    color: var(--text-primary);
+}
+
+#todays-actions-content .send-wishes-btn {
+    width: 100%;
+    background: var(--green);
+    color: #fff;
+    border-color: var(--green);
+    border-radius: var(--radius-sm);
+    padding: 10px 12px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+#todays-actions-content .send-wishes-btn:hover:not(:disabled) {
+    background: var(--green-dark);
+    border-color: var(--green-dark);
+}
+
+#todays-actions-content .send-wishes-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+/* PREMIUM CALENDAR */
+.mini-calendar {
+    border: 1px solid var(--gray-100);
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    padding: 16px;
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    grid-auto-rows: 50px;
+    gap: 6px;
+    align-items: center;
+    justify-items: center;
+}
+
+.calendar-day {
+    width: 36px;
+    height: 36px;
