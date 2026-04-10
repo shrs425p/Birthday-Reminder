@@ -1,6 +1,3 @@
-    border-color: var(--green) !important;
-}
-
 .dark-theme .btn-primary, .dark-theme .btn-submit {
     background-color: var(--green) !important;
     color: var(--white) !important;
@@ -118,3 +115,5 @@ body {
 .nav-menu {
     display: flex;
     gap: 8px;
+    align-items: center;
+}
