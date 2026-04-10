@@ -382,12 +382,27 @@ async function sendBirthdayWishes() {
     const statusEl = document.getElementById('wish-status');
     const btn = document.querySelector('button[onclick="sendBirthdayWishes()"]');
 
+    if (!statusEl) return;
+
     if (btn) setButtonLoading(btn, true);
     statusEl.style.display = 'block';
     statusEl.style.color = 'var(--blue)';
     statusEl.textContent = 'Sending emails...';
 
     try {
+        // Pre-check settings so we can guide the user before triggering a failed send call.
+        const settings = await fetchSettingsAPI();
+        if (!settings || !settings.email_configured) {
+            if (btn) setButtonLoading(btn, false, false);
+            statusEl.style.color = 'var(--red)';
+            statusEl.textContent = 'Email failed: Configure SMTP in the Settings tab first.';
+            if (typeof switchTab === 'function') switchTab('settings');
+            if (typeof showToast === 'function') {
+                showToast('Configure SMTP in Settings before sending wishes.', 'error');
+            }
+            return;
+        }
+
         const data = await sendBirthdayWishesAPI();
         if (data.success) {
             if (btn) setButtonLoading(btn, false, true);
@@ -398,7 +413,10 @@ async function sendBirthdayWishes() {
         } else {
             if (btn) setButtonLoading(btn, false, false);
             statusEl.style.color = 'var(--red)';
-            statusEl.textContent = 'Email failed: ' + (data.message || 'Unknown error. Check .env config.');
+            statusEl.textContent = 'Email failed: ' + (data.message || 'Unknown error. Check SMTP settings.');
+            if (data.message && data.message.toLowerCase().includes('not configured')) {
+                if (typeof switchTab === 'function') switchTab('settings');
+            }
         }
     } catch {
         if (btn) setButtonLoading(btn, false, false);

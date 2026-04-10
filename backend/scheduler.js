@@ -100,11 +100,7 @@ async function runDailyWishes() {
  * Start or restart the cron schedule based on DB settings.
  */
 function startScheduler() {
-    let schedule = process.env.CRON_SCHEDULE;
-    if (!schedule) {
-        console.warn('[Scheduler] Missing CRON_SCHEDULE in environment — scheduler is disabled.');
-        return;
-    }
+    let schedule = process.env.CRON_SCHEDULE || '';
     try {
         const row = db.prepare("SELECT value FROM settings WHERE key = 'auto_send_time'").get();
         if (row && row.value) {
@@ -119,6 +115,11 @@ function startScheduler() {
         }
     } catch (err) {
         console.error('[Scheduler] Error reading auto_send_time from DB', err);
+    }
+    if (!schedule) {
+        // Fallback keeps auto-send working even when CRON_SCHEDULE is not provided.
+        schedule = '0 8 * * *';
+        console.warn('[Scheduler] Missing CRON_SCHEDULE and invalid auto_send_time — using fallback 08:00 IST.');
     }
     if (currentCronTask) {
         currentCronTask.stop();
