@@ -76,7 +76,7 @@ async function saveSmtpConfig() {
 
     const email = emailInput ? emailInput.value.trim() : '';
     const pass = passInput ? passInput.value.trim() : '';
-    const time = timeInput ? timeInput.value : '08:00';
+    const time = timeInput ? timeInput.value : '';
 
     if (!email || !pass || !time) {
         showToast('Email, App Password, and Dispatch Time are required.', 'error');
