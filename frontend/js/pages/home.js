@@ -34,6 +34,43 @@ function getUpcomingTurningAge(dob) {
     return nextBirthday.getFullYear() - birth.getFullYear();
 }
 
+function getPersonalWishTemplate(name) {
+    const safeName = (name || 'Friend').trim() || 'Friend';
+    const templates = [
+        {
+            subject: `🎉 Happy Birthday, ${safeName}! 🎂✨`,
+            body: `Hey ${safeName}! 🎈\n\nWishing you the happiest birthday ever! 🥳🎂\nMay your day be full of smiles, laughter, cake, and amazing memories. 🎁✨\n\nHave a fantastic year ahead! 🌟\nBest wishes!`
+        },
+        {
+            subject: `🥳 It's Your Day, ${safeName}! 🎊`,
+            body: `Dear ${safeName}, 💌\n\nMany many happy returns of the day! 🎂\nMay this special day bring you joy, success, and lots of sweet moments. 🌈🎁\n\nKeep shining and smiling always! ✨😊\nWarm wishes!`
+        },
+        {
+            subject: `🎂 Cheers to You, ${safeName}! 🌟`,
+            body: `Hi ${safeName}! 🎉\n\nHappy Birthday! 🥳\nWishing you love, laughter, good health, and exciting new opportunities this year. 🎈🚀\n\nEnjoy your celebration to the fullest! 🍰✨\nBest wishes!`
+        }
+    ];
+    return templates[Math.floor(Math.random() * templates.length)];
+}
+
+function getPersonalGroupWishTemplate() {
+    const templates = [
+        {
+            subject: '🎉 Happy Birthday to You All! 🎂🥳',
+            body: `Hey Birthday Stars! 🌟\n\nWishing you all a very Happy Birthday! 🥳🎂\nMay your day be filled with joy, laughter, and beautiful celebrations. 🎉🎈\nWishing you a wonderful year ahead full of success and happiness! ✨🎁`
+        },
+        {
+            subject: '🎊 Celebration Time - Happy Birthday Everyone! 🎂',
+            body: `Hello Superstars! ⭐\n\nSending warm birthday wishes to all of you! 🥳🎉\nHope your day is packed with happy moments, sweet surprises, and lots of cake. 🍰🎁\nMay the year ahead be bright, successful, and full of positivity. 🌈✨`
+        },
+        {
+            subject: '🎈 Group Birthday Wishes Just for You! 🎂✨',
+            body: `Dear Birthday Champions, 🏆\n\nHappy Birthday to each one of you! 🎉🥳\nMay your special day bring smiles, laughter, and unforgettable memories. 📸🎁\nWishing you all health, happiness, and big achievements in the coming year. 🚀🌟`
+        }
+    ];
+    return templates[Math.floor(Math.random() * templates.length)];
+}
+
 // --- 3. Render Today's Birthday Wall ---
 function renderTodaysBirthdays(birthdays) {
     const listEl = document.getElementById('home-birthdays-list');
@@ -101,8 +138,9 @@ function renderTodaysBirthdays(birthdays) {
                 if (typeof showToast === 'function') showToast('No email available for this student', 'error');
                 return;
             }
-            const subject = encodeURIComponent(`Happy Birthday ${name}! 🎂`);
-            const body = encodeURIComponent(`Hey ${name},\n\nWishing you a very Happy Birthday! Hope your day is filled with joy and celebrations! 🎉🎂\n\nBest wishes!`);
+            const template = getPersonalWishTemplate(name);
+            const subject = encodeURIComponent(template.subject);
+            const body = encodeURIComponent(template.body);
             window.open(`mailto:${email}?subject=${subject}&body=${body}`);
         });
     });
@@ -231,7 +269,7 @@ function renderTodaysActions(allBirthdays, todaysBirthdays) {
         </div>
     `;
 
-    // Wire up the Wish All button to open individual mailto links (100ms apart)
+    // Wire up the Wish All button to open personal email compose via mailto
     const wishAllBtn = container.querySelector('#wish-all-btn');
     if (wishAllBtn) {
         if (!Array.isArray(todaysBirthdays) || todaysBirthdays.length === 0) {
@@ -245,9 +283,10 @@ function renderTodaysActions(allBirthdays, todaysBirthdays) {
                     if (typeof showToast === 'function') showToast('No email addresses available for today\'s birthdays', 'error');
                     return;
                 }
+                const template = getPersonalGroupWishTemplate();
                 const bccList = emails.join(',');
-                const subject = encodeURIComponent(`Happy Birthday! 🎂`);
-                const body = encodeURIComponent(`Hey,\n\nWishing you a very Happy Birthday! Hope your day is filled with joy and celebrations! 🎉🎂\n\nBest wishes!`);
+                const subject = encodeURIComponent(template.subject);
+                const body = encodeURIComponent(template.body);
                 window.open(`mailto:?bcc=${bccList}&subject=${subject}&body=${body}`);
             });
         }

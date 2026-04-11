@@ -2,41 +2,49 @@
 
 ```mermaid
 flowchart TB
-    %% Actors
-    Visitor[Visitor]
-    Student[Student]
-    Admin[Admin]
+    %% User entry
+    subgraph ACT[Users]
+        direction LR
+        Visitor[Visitor]
+        Student[Student]
+        Admin[Admin]
+    end
 
     %% Frontend
     subgraph FE[Frontend Layer - HTML CSS Vanilla JS]
+        direction LR
         Home[Home Page /]
         StudentPage[Student Page /student]
         AdminPage[Admin Page /admin]
-        ApiClient[JS API Client + Auth Helpers]
+        ApiClient[Frontend UI + JS API Client]
     end
 
-    %% Server entry
+    %% Express app entry
     subgraph APP[Application Layer - Express]
+        direction LR
         Server[server.js\nStatic hosting + route wiring]
         ErrorHandler[Global error handler + API 404]
     end
 
-    %% Middleware
+    %% Access gates
     subgraph MW[Security and Access Control]
+        direction LR
         RequireAuth[requireAuth\nJWT validation]
         RequireAdmin[requireAdmin\nrole check admin]
     end
 
     %% Feature modules
     subgraph MOD[Feature Modules]
+        direction LR
         AuthMod[Auth Module\nPOST /api/login\nPUT /api/password]
-        BirthdaysMod[Birthdays Module\nGET /today /upcoming /\nGET /stats\nPOST /\nPUT /:id\nDELETE /:id\nPOST /upload\nPOST /wish]
-        RequestsMod[Requests Module\nPOST /api/requests\nGET /api/requests\nPUT /api/requests/:id/status]
-        SettingsMod[Settings Module\nGET /api/settings\nPUT /api/settings/:key]
+        BirthdaysMod[Birthdays Module\nCRUD + today/upcoming + upload + wish]
+        RequestsMod[Requests Module\ncreate + approve/reject]
+        SettingsMod[Settings Module\nSMTP + template + auto_send_time]
     end
 
     %% Services
     subgraph SVC[Background and Messaging Services]
+        direction LR
         Scheduler[scheduler.js\nnode-cron daily trigger]
         Mailer[emailService + nodemailer]
         Crypto[crypto util\nSMTP password encrypt/decrypt]
@@ -44,16 +52,17 @@ flowchart TB
 
     %% Data
     subgraph DBL[Data Layer - SQLite]
+        direction LR
         Users[(users)]
         Birthdays[(birthdays)]
         Requests[(requests)]
         Settings[(settings)]
+        Uploads[(uploads folder)]
     end
 
     SMTP[(External SMTP Provider)]
-    Uploads[(uploads folder)]
 
-    %% Actor to frontend
+    %% User to frontend
     Visitor --> Home
     Student --> StudentPage
     Admin --> AdminPage
@@ -65,36 +74,34 @@ flowchart TB
     ApiClient --> Server
     Server --> ErrorHandler
 
-    %% Route access flow
+    %% Routing and guards (ordered to reduce edge crossing)
     Server --> AuthMod
-    Server --> BirthdaysMod
-    Server --> RequestsMod
-    Server --> SettingsMod
+    Server --> RequireAuth
     Server --> Scheduler
 
-    BirthdaysMod --> RequireAuth
-    RequestsMod --> RequireAuth
-    SettingsMod --> RequireAuth
-    BirthdaysMod --> RequireAdmin
-    RequestsMod --> RequireAdmin
-    SettingsMod --> RequireAdmin
+    RequireAuth --> BirthdaysMod
+    RequireAuth --> RequestsMod
+    RequireAuth --> SettingsMod
+    RequireAuth --> RequireAdmin
+    RequireAdmin --> BirthdaysMod
+    RequireAdmin --> RequestsMod
+    RequireAdmin --> SettingsMod
 
-    %% Module to data
+    %% Module to data/service
     AuthMod --> Users
     BirthdaysMod --> Birthdays
     RequestsMod --> Requests
     SettingsMod --> Settings
-
-    %% Upload and mail flow
     BirthdaysMod --> Uploads
     BirthdaysMod --> Mailer
-    Scheduler --> Mailer
+
+    %% Settings/scheduler/mail flow
+    SettingsMod --> Scheduler
+    SettingsMod --> Crypto
     Scheduler --> Birthdays
     Scheduler --> Settings
-    SettingsMod --> Scheduler
-
+    Scheduler --> Mailer
     Mailer --> Crypto
-    SettingsMod --> Crypto
     Crypto --> Settings
     Mailer --> SMTP
 ```

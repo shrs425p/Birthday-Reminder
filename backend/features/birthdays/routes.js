@@ -35,6 +35,4 @@ router.delete('/:id', requireAdmin, deleteBirthday);
 router.post('/upload', requireAdmin, upload.single('file'), uploadExcelBirthdays);
 router.post('/wish', requireAdmin, sendBirthdayWishes);
 
-// Individual-send via admin SMTP removed; home opens mailto links now
-
 module.exports = router;
