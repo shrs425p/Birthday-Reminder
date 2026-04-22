@@ -1,5 +1,7 @@
 # WORKING.md
 
+Last Updated: 2026-04-22
+
 ## 1. Project Purpose
 
 Birthday Reminder centralizes student birthday records and provides a safe correction workflow.
@@ -9,13 +11,39 @@ User roles:
 - Student/public user: views birthdays and submits correction request
 - Admin: manages all records, requests, SMTP settings, and scheduler
 
-## 2. Runtime Flow
+## 2. Runtime Boot Sequence
 
-1. `backend/server.js` loads env, starts Express, serves static frontend, and mounts API routes.
-2. `backend/config/db.js` initializes SQLite schema and default settings.
-3. `backend/scheduler.js` starts auto-send scheduling using env cron + DB `auto_send_time` override.
+1. `backend/server.js` loads `dotenv` first, validates `PORT`, and starts Express middleware.
+2. `backend/config/db.js` opens SQLite and ensures schema + defaults (`email_template`, `auto_send_time`).
+3. Static assets are served from `frontend/`, with explicit aliases for `/`, `/admin`, `/student`.
+4. API mount order is: auth (`/api`), quick wish (`/api/send-wishes`), birthdays, requests, settings.
+5. `backend/scheduler.js` starts/restarts cron using DB `auto_send_time` first, then `CRON_SCHEDULE`, then `08:00` fallback.
+6. Unknown non-API routes return `frontend/pages/404.html`; unknown API routes flow to JSON error handler.
 
-## 3. Frontend Flows
+## 3. Mounted API Map
+
+Public endpoints:
+- `POST /api/login`
+- `PUT /api/password`
+- `GET /api/birthdays`
+- `GET /api/birthdays/today`
+- `GET /api/birthdays/upcoming`
+- `POST /api/requests`
+- `POST /api/send-wishes`
+
+Admin endpoints:
+- `GET /api/birthdays/stats`
+- `POST /api/birthdays`
+- `PUT /api/birthdays/:id`
+- `DELETE /api/birthdays/:id`
+- `POST /api/birthdays/upload`
+- `POST /api/birthdays/wish`
+- `GET /api/requests`
+- `PUT /api/requests/:id/status`
+- `GET /api/settings`
+- `PUT /api/settings/:key`
+
+## 4. Frontend Flows
 
 ### Home page (`frontend/pages/index.html`)
 - Loads split UI and API modules
@@ -37,7 +65,7 @@ User roles:
 - Lists birthdays (`GET /api/birthdays`)
 - Submits correction request (`POST /api/requests`)
 
-## 4. Backend Feature Modules
+## 5. Backend Feature Modules
 
 ### Auth (`backend/features/auth`)
 - `controller.js`: login, password change
@@ -59,10 +87,11 @@ User roles:
 - `controller.js`: get/update settings, restart scheduler on time change
 - `routes.js`: admin-only settings access
 
-## 5. API Security Model
+## 6. API Security Model
 
 Public endpoints:
 - `POST /api/login`
+- `PUT /api/password`
 - `GET /api/birthdays`
 - `GET /api/birthdays/today`
 - `GET /api/birthdays/upcoming`
@@ -81,7 +110,12 @@ Admin-protected endpoints:
 - `GET /api/settings`
 - `PUT /api/settings/:key`
 
-## 6. Database Tables
+Auth/role behavior:
+- `requireAuth` checks Bearer token and returns 401 when token is missing.
+- `requireAuth` returns 403 when token is invalid/expired.
+- `requireAdmin` enforces `role === 'admin'` for protected operations.
+
+## 7. Database Tables
 
 Defined in `backend/config/db.js`:
 - `users`
@@ -93,7 +127,7 @@ Defaults seeded:
 - `settings.email_template`
 - `settings.auto_send_time` (default `08:00`)
 
-## 7. Frontend Split Notes
+## 8. Frontend Split Notes
 
 CSS entrypoint:
 - `frontend/style.css`
@@ -108,7 +142,111 @@ JS split:
 - UI modules: `frontend/js/core/ui/*.js`
 - Page modules: `frontend/js/pages/*.js`, `frontend/js/pages/admin/*.js`
 
-## 8. Local Development
+## 9. Current Structure Snapshot (excluding backend/node_modules)
+
+```text
+reminder/
+|-- backend/
+|   |-- config/
+|   |   |-- db.js
+|   |   \-- defaultTemplate.js
+|   |-- features/
+|   |   |-- auth/
+|   |   |   |-- controller.js
+|   |   |   \-- routes.js
+|   |   |-- birthdays/
+|   |   |   |-- controller.js
+|   |   |   |-- crudHandlers.js
+|   |   |   |-- emailService.js
+|   |   |   |-- importHandlers.js
+|   |   |   |-- routes.js
+|   |   |   \-- wishHandlers.js
+|   |   |-- requests/
+|   |   |   |-- controller.js
+|   |   |   \-- routes.js
+|   |   \-- settings/
+|   |       |-- controller.js
+|   |       \-- routes.js
+|   |-- middleware/
+|   |   |-- authMiddleware.js
+|   |   \-- errorHandler.js
+|   |-- uploads/
+|   |-- utils/
+|   |   \-- crypto.js
+|   |-- audit_db.js
+|   |-- database.db
+|   |-- kill.bat
+|   |-- package-lock.json
+|   |-- package.json
+|   |-- print-settings.js
+|   |-- scheduler.js
+|   |-- server.js
+|   \-- start.bat
+|-- frontend/
+|   |-- js/
+|   |   |-- core/
+|   |   |   |-- api/
+|   |   |   |   |-- auth.js
+|   |   |   |   |-- birthdays.js
+|   |   |   |   |-- requests.js
+|   |   |   |   |-- settings.js
+|   |   |   |   \-- shared.js
+|   |   |   |-- ui/
+|   |   |   |   |-- init.js
+|   |   |   |   |-- motion.js
+|   |   |   |   |-- notifications.js
+|   |   |   |   |-- runtime.js
+|   |   |   |   \-- theme.js
+|   |   |   |-- auth.js
+|   |   |   \-- ui-utils.js
+|   |   \-- pages/
+|   |       |-- admin/
+|   |       |   |-- requests.js
+|   |       |   \-- settings.js
+|   |       |-- admin.js
+|   |       |-- home.js
+|   |       \-- student.js
+|   |-- pages/
+|   |   |-- 404.html
+|   |   |-- admin.html
+|   |   |-- index.html
+|   |   \-- student.html
+|   |-- styles/
+|   |   |-- features/
+|   |   |   |-- components/
+|   |   |   |   |-- advanced-ui.css
+|   |   |   |   |-- cards-and-buttons.css
+|   |   |   |   |-- feedback-and-lists.css
+|   |   |   |   \-- forms-and-animations.css
+|   |   |   |-- components.__source.css
+|   |   |   \-- components.css
+|   |   |-- pages/
+|   |   |   |-- home/
+|   |   |   |   |-- actions-and-background.css
+|   |   |   |   |-- layout.css
+|   |   |   |   \-- widgets-and-cards.css
+|   |   |   \-- home-v2.css
+|   |   \-- shared/
+|   |       |-- tokens/
+|   |       |   |-- base-layout.css
+|   |       |   |-- headers-and-stats.css
+|   |       |   \-- theme-tokens.css
+|   |       \-- tokens-layout.css
+|   \-- style.css
+|-- .env
+|-- .env.example
+|-- .gitignore
+|-- GEMINI.md
+|-- PROJECT_FULL_REPORT.txt
+|-- README.md
+|-- render.yaml
+|-- report.txt
+|-- structure.txt
+|-- workflow.md
+\-- WORKING.md
+```
+
+## 10. Local Development
 
 From repository root:
 

@@ -1,5 +1,7 @@
 # Detailed Workflow Diagram
 
+Last Updated: 2026-04-22
+
 ```mermaid
 flowchart TD
     Start([Start Application]) --> Boot[Load env and initialize Express]
@@ -17,6 +19,10 @@ flowchart TD
     PubToday --> BirthdaysRead[(Read birthdays)]
     PubUpcoming --> BirthdaysRead
     PubAll --> BirthdaysRead
+    PublicAccess -->|Quick wish trigger| QuickSend[POST /api/send-wishes]
+    QuickSend --> QuickMailReady{SMTP configured}
+    QuickMailReady -->|No| ConfigErr[Return configuration error]
+    QuickMailReady -->|Yes| TodayRows[(Query todays birthdays)]
 
     %% Student flow
     Wait --> StudentAccess{Student action}
@@ -88,17 +94,154 @@ flowchart TD
     CronSend --> CronLog[Log sent count]
 ```
 
-# Step-by-Step Workflow (Report Friendly)
+# Step-by-Step Workflow (Code-Aligned)
 
-1. Server boots, loads environment variables, and connects to SQLite.
-2. Database tables are created or migrated: users, birthdays, requests, settings.
-3. Default settings such as email template and auto_send_time are ensured.
-4. Frontend pages are served at /, /student, and /admin.
-5. Public users can view today, upcoming, and full birthday lists.
-6. Students can submit correction requests to be reviewed by admins.
-7. Admin logs in, receives JWT, and performs protected operations.
-8. Admin manages birthdays, uploads Excel sheets, and sends manual wishes.
-9. Admin settings update SMTP credentials, template, and dispatch time.
-10. When auto_send_time changes, scheduler restarts with the new cron rule.
-11. Daily scheduler checks todays birthdays and sends emails automatically.
-12. Errors are returned as JSON for API routes and custom 404 is served for unknown pages.
+1. `backend/server.js` loads environment variables first and validates required `PORT`.
+2. `backend/config/db.js` initializes SQLite schema (`users`, `birthdays`, `requests`, `settings`) and seeds defaults.
+3. Express mounts static frontend files from `frontend/` and clean page aliases (`/`, `/admin`, `/student`).
+4. API routes mount in this order: `/api` (auth), `/api/send-wishes`, `/api/birthdays`, `/api/requests`, `/api/settings`.
+5. Public flows use `GET /api/birthdays`, `/today`, `/upcoming`, and `POST /api/requests`.
+6. Admin login uses `POST /api/login`; successful login returns JWT stored by frontend in `localStorage`.
+7. Admin-only operations are protected by `requireAuth` + `requireAdmin` middleware.
+8. Birthday management includes CRUD, stats, XLSX upload, and `POST /api/birthdays/wish`.
+9. Shortcut `POST /api/send-wishes` runs today-wish sending logic without requiring admin middleware.
+10. Settings updates encrypt `email_pass` before save and restart scheduler when `auto_send_time` changes.
+11. Scheduler time precedence is `auto_send_time` from DB, else `CRON_SCHEDULE`, else fallback `0 8 * * *` (IST).
+12. Non-API unknown routes return `frontend/pages/404.html`; unknown API routes are forwarded to JSON error handler.
+
+## Mounted API Entry Points
+
+- POST /api/login
+- PUT /api/password
+- PUT /api/password
+- POST /api/send-wishes (public shortcut)
+- /api/birthdays/* (public read + admin write)
+- /api/requests/* (public create + admin review)
+- /api/settings/* (admin only)
+
+## Route Protection Summary
+
+Public:
+- POST /api/login
+- PUT /api/password
+- GET /api/birthdays
+- GET /api/birthdays/today
+- GET /api/birthdays/upcoming
+- POST /api/requests
+- POST /api/send-wishes
+
+Admin only:
+- GET /api/birthdays/stats
+- POST /api/birthdays
+- PUT /api/birthdays/:id
+- DELETE /api/birthdays/:id
+- POST /api/birthdays/upload
+- POST /api/birthdays/wish
+- GET /api/requests
+- PUT /api/requests/:id/status
+- GET /api/settings
+- PUT /api/settings/:key
+
+## Current Structure Snapshot (excluding backend/node_modules)
+
+```text
+reminder/
+|-- backend/
+|   |-- config/
+|   |   |-- db.js
+|   |   \-- defaultTemplate.js
+|   |-- features/
+|   |   |-- auth/
+|   |   |   |-- controller.js
+|   |   |   \-- routes.js
+|   |   |-- birthdays/
+|   |   |   |-- controller.js
+|   |   |   |-- crudHandlers.js
+|   |   |   |-- emailService.js
+|   |   |   |-- importHandlers.js
+|   |   |   |-- routes.js
+|   |   |   \-- wishHandlers.js
+|   |   |-- requests/
+|   |   |   |-- controller.js
+|   |   |   \-- routes.js
+|   |   \-- settings/
+|   |       |-- controller.js
+|   |       \-- routes.js
+|   |-- middleware/
+|   |   |-- authMiddleware.js
+|   |   \-- errorHandler.js
+|   |-- uploads/
+|   |-- utils/
+|   |   \-- crypto.js
+|   |-- audit_db.js
+|   |-- database.db
+|   |-- kill.bat
+|   |-- package-lock.json
+|   |-- package.json
+|   |-- print-settings.js
+|   |-- scheduler.js
+|   |-- server.js
+|   \-- start.bat
+|-- frontend/
+|   |-- js/
+|   |   |-- core/
+|   |   |   |-- api/
+|   |   |   |   |-- auth.js
+|   |   |   |   |-- birthdays.js
+|   |   |   |   |-- requests.js
+|   |   |   |   |-- settings.js
+|   |   |   |   \-- shared.js
+|   |   |   |-- ui/
+|   |   |   |   |-- init.js
+|   |   |   |   |-- motion.js
+|   |   |   |   |-- notifications.js
+|   |   |   |   |-- runtime.js
+|   |   |   |   \-- theme.js
+|   |   |   |-- auth.js
+|   |   |   \-- ui-utils.js
+|   |   \-- pages/
+|   |       |-- admin/
+|   |       |   |-- requests.js
+|   |       |   \-- settings.js
+|   |       |-- admin.js
+|   |       |-- home.js
+|   |       \-- student.js
+|   |-- pages/
+|   |   |-- 404.html
+|   |   |-- admin.html
+|   |   |-- index.html
+|   |   \-- student.html
+|   |-- styles/
+|   |   |-- features/
+|   |   |   |-- components/
+|   |   |   |   |-- advanced-ui.css
+|   |   |   |   |-- cards-and-buttons.css
+|   |   |   |   |-- feedback-and-lists.css
+|   |   |   |   \-- forms-and-animations.css
+|   |   |   |-- components.__source.css
+|   |   |   \-- components.css
+|   |   |-- pages/
+|   |   |   |-- home/
+|   |   |   |   |-- actions-and-background.css
+|   |   |   |   |-- layout.css
+|   |   |   |   \-- widgets-and-cards.css
+|   |   |   \-- home-v2.css
+|   |   \-- shared/
+|   |       |-- tokens/
+|   |       |   |-- base-layout.css
+|   |       |   |-- headers-and-stats.css
+|   |       |   \-- theme-tokens.css
+|   |       \-- tokens-layout.css
+|   \-- style.css
+|-- .env
+|-- .env.example
+|-- .gitignore
+|-- GEMINI.md
+|-- PROJECT_FULL_REPORT.txt
+|-- README.md
+|-- render.yaml
+|-- report.txt
+|-- structure.txt
+|-- workflow.md
+\-- WORKING.md
+```
