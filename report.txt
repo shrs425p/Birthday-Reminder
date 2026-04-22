@@ -1,0 +1,546 @@
+BIRTHDAY REMINDER - FILE BY FILE REPORT
+Generated: 2026-04-22
+
+PROJECT FOLDER TREE
+
+reminder/
+|-- backend/
+|   |-- config/
+|   |   |-- db.js
+|   |   \-- defaultTemplate.js
+|   |-- features/
+|   |   |-- auth/
+|   |   |   |-- controller.js
+|   |   |   \-- routes.js
+|   |   |-- birthdays/
+|   |   |   |-- controller.js
+|   |   |   |-- crudHandlers.js
+|   |   |   |-- emailService.js
+|   |   |   |-- importHandlers.js
+|   |   |   |-- routes.js
+|   |   |   \-- wishHandlers.js
+|   |   |-- requests/
+|   |   |   |-- controller.js
+|   |   |   \-- routes.js
+|   |   \-- settings/
+|   |       |-- controller.js
+|   |       \-- routes.js
+|   |-- middleware/
+|   |   |-- authMiddleware.js
+|   |   \-- errorHandler.js
+|   |-- uploads/
+|   |-- utils/
+|   |   \-- crypto.js
+|   |-- audit_db.js
+|   |-- database.db
+|   |-- kill.bat
+|   |-- package-lock.json
+|   |-- package.json
+|   |-- print-settings.js
+|   |-- scheduler.js
+|   |-- server.js
+|   \-- start.bat
+|-- frontend/
+|   |-- js/
+|   |   |-- core/
+|   |   |   |-- api/
+|   |   |   |   |-- auth.js
+|   |   |   |   |-- birthdays.js
+|   |   |   |   |-- requests.js
+|   |   |   |   |-- settings.js
+|   |   |   |   \-- shared.js
+|   |   |   |-- ui/
+|   |   |   |   |-- init.js
+|   |   |   |   |-- motion.js
+|   |   |   |   |-- notifications.js
+|   |   |   |   |-- runtime.js
+|   |   |   |   \-- theme.js
+|   |   |   |-- auth.js
+|   |   |   \-- ui-utils.js
+|   |   \-- pages/
+|   |       \-- admin/
+|   |       |   |-- requests.js
+|   |       |   \-- settings.js
+|   |       |-- admin.js
+|   |       |-- home.js
+|   |       \-- student.js
+|   |-- pages/
+|   |   |-- 404.html
+|   |   |-- admin.html
+|   |   |-- index.html
+|   |   \-- student.html
+|   \-- styles/
+|       |-- features/
+|       |   |-- components/
+|       |   |   |-- advanced-ui.css
+|       |   |   |-- cards-and-buttons.css
+|       |   |   |-- feedback-and-lists.css
+|       |   |   \-- forms-and-animations.css
+|       |   |-- components.__source.css
+|       |   \-- components.css
+|       |-- pages/
+|       |   |-- home/
+|       |   |   |-- actions-and-background.css
+|       |   |   |-- layout.css
+|       |   |   \-- widgets-and-cards.css
+|       |   \-- home-v2.css
+|       \-- shared/
+|           |-- tokens/
+|           |   |-- base-layout.css
+|           |   |-- headers-and-stats.css
+|           |   \-- theme-tokens.css
+|           \-- tokens-layout.css
+|   \-- style.css
+|-- .env
+|-- .env.example
+|-- .gitignore
+|-- GEMINI.md
+|-- PROJECT_FULL_REPORT.txt
+|-- README.md
+|-- render.yaml
+|-- report.txt
+|-- structure.txt
+|-- workflow.md
+\-- WORKING.md
+
+
+
+FILE SUMMARIES
+
+File: .env
+- Environment configuration file with runtime secrets and credentials.
+- Stores SMTP settings, JWT secret, encryption keys, bootstrap admin credentials, and database path.
+- Loaded via dotenv at app startup; values override defaults and are not committed to version control.
+- Contains sensitive data such as JWT_SECRET, DB_ENCRYPTION_KEY, and SMTP credentials; keep private.
+
+File: .env.example
+- Template file documenting all required environment variables.
+- Provides setup guidance before running in local or deployment environments.
+- Uses placeholder/default values for PORT, JWT_SECRET, SMTP_HOST, and related settings.
+- Developers copy this file to .env and fill real values.
+
+File: .gitignore
+- Git ignore list specifying files and directories that should not be committed.
+- Excludes node_modules, .env files, database files, logs, and OS/editor artifacts.
+- Pattern-based rules prevent accidental commit of secrets and generated files.
+- Keeps repository clean and safer for collaboration.
+
+File: GEMINI.md
+- Agent instruction file for the SHRS autonomous engineering workflow.
+- Defines identity, skill system, and selection logic for different task types.
+- Includes language/task mapping rules for guided analysis and refactoring.
+- Used as operating policy documentation for agent-assisted development.
+
+File: PROJECT_FULL_REPORT.txt
+- Comprehensive project-level report generated earlier for this codebase.
+- Covers overview, architecture, features, APIs, workflows, and database details.
+- Works as a stakeholder and onboarding reference document.
+- High-level scope, not line-by-line implementation guidance.
+
+File: README.md
+- Main repository documentation for setup, architecture, and feature overview.
+- Explains backend/frontend split, API endpoints, and environment requirements.
+- Includes structure diagrams and links to related project docs.
+- First entry point for developers joining the project.
+
+File: render.yaml
+- Render deployment configuration for hosting the backend service.
+- Defines runtime, build/start commands, port, and deployment behavior.
+- Supports automatic deploy from source control.
+- Keeps deployment reproducible without manual server steps.
+
+File: structure.txt
+- Project structure snapshot with file names and line counts.
+- Provides quick inventory of files in the repository.
+- Useful for reporting and maintenance audits.
+- Informational document; not consumed at runtime.
+
+File: workflow.md
+- Mermaid-based application workflow documentation.
+- Maps startup sequence, public pages, admin operations, and scheduler paths.
+- Describes request/response movement between frontend and backend.
+- Useful for understanding end-to-end flow and debugging behavior.
+
+File: WORKING.md
+- Operational deep-dive document describing current implementation behavior.
+- Covers frontend page flows, backend feature responsibilities, and API behavior.
+- Captures security model and runtime details for maintainers.
+- Serves as a living technical notes file during ongoing development.
+
+File: report.txt
+- Generated file-by-file inventory report for this repository.
+- Lists each existing project file and summarizes description, use, and working behavior.
+- Helps quick onboarding, audits, and navigation across backend/frontend modules.
+- Maintained as a snapshot and can be regenerated after structure changes.
+
+File: backend/audit_db.js
+- Utility script for auditing database records with masking.
+- Reads birthdays and requests tables and prints sanitized output.
+- Applies masking patterns to names/emails to avoid exposing sensitive data.
+- Used for safe diagnostics in development/support workflows.
+
+File: backend/database.db
+- SQLite binary database file used by the backend.
+- Stores users, birthdays, correction requests, and settings.
+- Initialized/migrated by db.js during startup.
+- Runtime data store; typically excluded from git for safety.
+
+File: backend/kill.bat
+- Windows helper script to stop running Node processes quickly.
+- Uses taskkill to terminate node.exe and child processes.
+- Helps reset local dev environment when server hangs.
+- Windows-only convenience script.
+
+File: backend/package-lock.json
+- NPM lockfile with exact pinned dependency tree.
+- Ensures deterministic installs across machines/environments.
+- Auto-generated and updated by npm install operations.
+- Important for reproducible builds and deployment consistency.
+
+File: backend/package.json
+- Backend project manifest with scripts and dependencies.
+- Declares start/dev commands and engine expectations.
+- Lists libraries for Express, SQLite, auth, cron, email, uploads, and tooling.
+- Central source for dependency and script management.
+
+File: backend/print-settings.js
+- Standalone debug script to print settings table values from DB.
+- Connects using DB_PATH (or default path) and outputs console table.
+- Helps verify SMTP/template/scheduler settings outside UI.
+- Useful for troubleshooting configuration issues.
+
+File: backend/scheduler.js
+- Cron scheduling module for automatic daily birthday wishes.
+- Reads schedule configuration and triggers email send workflow.
+- Exports startup and run functions used by server and settings updates.
+- Handles transporter/template wiring and logs success/failure safely.
+
+File: backend/server.js
+- Main Express entry point for backend API and static frontend serving.
+- Loads env, middleware, feature routes, and global error handling.
+- Mounts auth, birthdays, requests, settings, and send-wishes endpoints.
+- Starts HTTP server and scheduler at application boot.
+
+File: backend/start.bat
+- Windows script for launching backend quickly.
+- Changes directory and executes node server.js.
+- Pauses after execution for visibility in console usage.
+- Convenience for local Windows development.
+
+File: backend/config/db.js
+- Database initialization and migration module.
+- Creates required tables and inserts default settings if missing.
+- Applies schema evolution checks and bootstrap admin setup.
+- Exports shared better-sqlite3 DB connection for feature modules.
+
+File: backend/config/defaultTemplate.js
+- Default HTML email template for birthday wishes.
+- Provides fallback design when no custom template exists in settings.
+- Uses placeholder interpolation fields for personalization.
+- Keeps outgoing wish emails styled and consistent by default.
+
+File: backend/features/auth/controller.js
+- Auth business logic handlers for login and password update.
+- Validates credentials via bcrypt and signs JWT on successful login.
+- Verifies old password before updating with new hash.
+- Returns structured success/error HTTP responses.
+
+File: backend/features/auth/routes.js
+- Route mapping file for auth endpoints.
+- Connects POST login and PUT password-change handlers.
+- Keeps auth URL declarations separate from business logic.
+- Lightweight router used by server.js.
+
+File: backend/features/birthdays/controller.js
+- Aggregator controller that re-exports birthday feature handlers.
+- Combines CRUD, import, and wish handler exports into one module.
+- Simplifies route imports and feature organization.
+- No heavy logic; acts as export composition layer.
+
+File: backend/features/birthdays/crudHandlers.js
+- Primary CRUD and retrieval logic for birthday records.
+- Implements add/get/update/delete plus today/upcoming/stats queries.
+- Parses/filters DOB-based date windows for dashboard needs.
+- Performs request validation and returns JSON API responses.
+
+File: backend/features/birthdays/emailService.js
+- Shared email utility for birthday workflows.
+- Builds nodemailer transporter from encrypted DB settings.
+- Retrieves active email template with fallback to default template.
+- Exposes reusable helper methods for manual and scheduled sends.
+
+File: backend/features/birthdays/importHandlers.js
+- Bulk import logic for Excel/CSV birthday data.
+- Parses files with xlsx, validates required columns, transforms date values.
+- Inserts new records and updates matched rows where applicable.
+- Reports add/update/skip counts and import errors to caller.
+
+File: backend/features/birthdays/routes.js
+- Birthday feature routing layer.
+- Defines public reads and admin-protected mutation endpoints.
+- Applies auth/admin middleware and multer upload handling.
+- Connects URL patterns to corresponding birthday handlers.
+
+File: backend/features/birthdays/wishHandlers.js
+- Email dispatch handlers for birthday wishes.
+- Supports admin-triggered send and endpoint-based today send flow.
+- Fetches today birthdays, builds message payloads, and sends via SMTP.
+- Returns summary counts and logs per-send errors safely.
+
+File: backend/features/requests/controller.js
+- Correction request management logic.
+- Handles public request creation and admin review/status updates.
+- On approval, applies birthday data update/insert behavior.
+- Encapsulates request workflow state transitions.
+
+File: backend/features/requests/routes.js
+- Express routes for request feature endpoints.
+- Exposes public create endpoint and admin list/update endpoints.
+- Applies auth/admin checks where required.
+- Thin routing module delegating to request controller functions.
+
+File: backend/features/settings/controller.js
+- Settings retrieval/update handlers for admin configuration.
+- Masks sensitive fields in responses and encrypts password on save.
+- Triggers scheduler restart when auto_send_time changes.
+- Uses upsert-style behavior for flexible setting keys.
+
+File: backend/features/settings/routes.js
+- Router file for settings API endpoints.
+- Declares GET all settings and PUT update-by-key operations.
+- Requires authenticated admin access for both endpoints.
+- Keeps route definitions clean and centralized.
+
+File: backend/middleware/authMiddleware.js
+- JWT authentication and authorization middleware.
+- requireAuth validates bearer token and attaches user payload.
+- requireAdmin enforces role-based access for admin-only routes.
+- Returns standard 401/403 responses for denied requests.
+
+File: backend/middleware/errorHandler.js
+- Global Express error-handler middleware.
+- Logs server errors and formats standardized JSON error output.
+- Shows stack trace in development mode for easier debugging.
+- Final middleware in chain to catch uncaught route errors.
+
+File: backend/utils/crypto.js
+- Encryption utility for sensitive settings data.
+- Uses AES-256-CBC with scrypt-derived key and random IVs.
+- Provides encrypt/decrypt helpers for storing email passwords securely.
+- Includes graceful fallback behavior for invalid encrypted input.
+
+File: frontend/style.css
+- Frontend CSS entrypoint file.
+- Imports shared tokens, component sets, and page style bundles.
+- Keeps stylesheet composition modular via @import structure.
+- Loaded by frontend HTML pages as global style root.
+
+File: frontend/js/core/auth.js
+- Frontend session/auth state logic for admin page.
+- Handles login/logout, session restore, and panel visibility switching.
+- Manages localStorage token payload and password-change flow hooks.
+- Coordinates UI state with backend auth API results.
+
+File: frontend/js/core/ui-utils.js
+- Legacy compatibility shim for older UI utility imports.
+- Indicates that actual UI helpers moved to modular ui/* files.
+- Preserves compatibility for previous references.
+- Minimal/no active behavior beyond migration continuity.
+
+File: frontend/js/core/api/auth.js
+- API wrapper for authentication endpoints.
+- Exposes login and change-password request helpers.
+- Delegates HTTP mechanics to shared apiFetch utility.
+- Keeps auth API calls isolated from page-level logic.
+
+File: frontend/js/core/api/birthdays.js
+- API wrapper module for all birthday-related endpoints.
+- Provides fetch, create, update, delete, upload, and wish methods.
+- Uses shared loading wrappers and auth headers where needed.
+- Serves as typed-like interface between UI pages and backend routes.
+
+File: frontend/js/core/api/requests.js
+- API wrapper for correction request operations.
+- Supports submit (public), fetch (admin), and resolve (admin) calls.
+- Centralizes endpoint URLs and fetch options.
+- Used by student and admin request UI modules.
+
+File: frontend/js/core/api/settings.js
+- API wrapper for settings retrieval and updates.
+- Exposes fetchSettings and updateSetting helper functions.
+- Uses authenticated shared request utilities.
+- Provides clean interface for admin settings UI.
+
+File: frontend/js/core/api/shared.js
+- Shared API runtime utilities for all frontend requests.
+- Contains base URL logic, auth header builder, fetch wrapper, and loading helpers.
+- Handles auth failures uniformly (e.g., unauthorized session behavior).
+- Reduces duplication across feature API modules.
+
+File: frontend/js/core/ui/init.js
+- Lightweight UI initialization orchestrator.
+- Runs on DOM ready and calls theme/motion/background setup routines.
+- Guards optional init functions to avoid runtime crashes.
+- Keeps page startup behavior centralized.
+
+File: frontend/js/core/ui/motion.js
+- Interactive motion effects module.
+- Implements card tilt, magnetic buttons, and scratch-off interactions.
+- Uses animation frames and CSS variables for responsive effects.
+- Enhances visual engagement across modern UI components.
+
+File: frontend/js/core/ui/notifications.js
+- Notification and empty-state helper module.
+- Provides toast popup utility and reusable empty-state HTML builder.
+- Controls message type styling and auto-dismiss timing.
+- Reused across page modules for consistent feedback UX.
+
+File: frontend/js/core/ui/runtime.js
+- Runtime UI utilities for loading bar and animated background.
+- Drives top loading indicator during async operations.
+- Builds interactive dot-grid canvas with mouse-reactive behavior.
+- Manages visual runtime feedback and atmosphere effects.
+
+File: frontend/js/core/ui/theme.js
+- Theme control module for light/dark mode handling.
+- Initializes theme from storage and toggles via UI action.
+- Updates body class and icon/state accordingly.
+- Persists user preference between sessions.
+
+File: frontend/js/pages/admin.js
+- Main admin page controller script.
+- Handles tab navigation, birthday CRUD forms, upload/export actions, and send-wish flows.
+- Coordinates with requests/settings submodules and shared UI helpers.
+- Implements rich interaction patterns including modals and list state updates.
+
+File: frontend/js/pages/home.js
+- Home page behavior script.
+- Fetches and renders today/upcoming birthdays, greeting, stats, calendar, and quick actions.
+- Builds dynamic widgets and milestone card content.
+- Coordinates celebratory/interactive effects tied to data state.
+
+File: frontend/js/pages/student.js
+- Student page behavior script.
+- Loads searchable birthday list and binds correction request submission form.
+- Performs client-side filtering and validation before API calls.
+- Supports public user interactions without authentication.
+
+File: frontend/js/pages/admin/requests.js
+- Admin Requests tab module.
+- Fetches pending corrections and renders approve/reject controls.
+- Sends resolution actions and refreshes related views.
+- Encapsulates request tab behavior separate from main admin controller.
+
+File: frontend/js/pages/admin/settings.js
+- Admin Settings tab module.
+- Loads/saves SMTP configuration and editable email template content.
+- Renders live preview and handles masked password save logic.
+- Coordinates with backend setting updates, including scheduler-sensitive fields.
+
+File: frontend/pages/404.html
+- Custom 404 error page template.
+- Presents user-friendly navigation back to valid sections.
+- Includes themed styling and interactive animated mascot behavior.
+- Keeps unknown routes visually aligned with app branding.
+
+File: frontend/pages/admin.html
+- Admin interface HTML structure.
+- Contains login block, dashboard tabs, forms, lists, and settings/template editor areas.
+- Defines semantic containers used by admin.js and submodules.
+- Serves as primary authenticated operations UI shell.
+
+File: frontend/pages/index.html
+- Public home page HTML structure.
+- Includes hero, stats, birthday wall, milestones, calendar, and quick actions.
+- Loads shared styles/scripts and home-specific logic.
+- Acts as landing page for public birthday visibility.
+
+File: frontend/pages/student.html
+- Public student page HTML structure.
+- Contains birthday list area and correction request submission form.
+- Designed for student self-service updates without login.
+- Wired to student.js and shared API/UI modules.
+
+File: frontend/styles/features/components.__source.css
+- Empty placeholder CSS source file.
+- Currently contains no style rules.
+- Likely retained for scaffold/history or generation pipeline.
+- No runtime impact in present form.
+
+File: frontend/styles/features/components.css
+- Feature components style aggregator.
+- Imports component styles for cards/buttons, forms/animations, feedback/lists, and advanced UI.
+- Centralizes component stylesheet composition.
+- Keeps feature styling modular and maintainable.
+
+File: frontend/styles/features/components/advanced-ui.css
+- Advanced visual component style definitions.
+- Styles enhanced cards, swipe gestures, mini components, and rich interactions.
+- Provides transitions, glass effects, and responsive behavior rules.
+- Supports premium-feel UI behavior used in modern sections.
+
+File: frontend/styles/features/components/cards-and-buttons.css
+- Core card and button styling layer.
+- Defines button variants, card surfaces, hover states, and loading looks.
+- Includes animation/shimmer/spotlight details for interactive affordance.
+- Supplies reusable component visuals across pages.
+
+File: frontend/styles/features/components/feedback-and-lists.css
+- Feedback and list presentation styles.
+- Covers toast notifications, empty states, list row grids, and helper classes.
+- Includes animations and responsive adjustments for data-display sections.
+- Standardizes user feedback and list readability.
+
+File: frontend/styles/features/components/forms-and-animations.css
+- Form control and animation utility styles.
+- Defines label/input/select states, badges, utility spacing, and motion keyframes.
+- Improves clarity and interaction quality for form-heavy screens.
+- Shared by admin/student and reusable widgets.
+
+File: frontend/styles/pages/home-v2.css
+- Home page stylesheet aggregator.
+- Imports layout, widgets/cards, and actions/background CSS modules.
+- Keeps home-specific style composition centralized.
+- Provides modular separation from global/feature styles.
+
+File: frontend/styles/pages/home/actions-and-background.css
+- Home action cards and background effect styles.
+- Defines action-grid layout, milestone visuals, calendar states, and ambient background behavior.
+- Supports interactive/dynamic home modules rendered by home.js.
+- Adds page-specific atmospheric styling.
+
+File: frontend/styles/pages/home/layout.css
+- Home page structural layout stylesheet.
+- Defines major grid regions, sections, wrappers, and responsive breakpoints.
+- Controls arrangement of widgets and lower-row panels.
+- Ensures adaptive structure across desktop and mobile screens.
+
+File: frontend/styles/pages/home/widgets-and-cards.css
+- Home widget/card detail styling.
+- Styles birthday cards, milestone blocks, glass-card effects, and related elements.
+- Applies hover/focus visual responses and spacing systems.
+- Complements home layout and actions CSS modules.
+
+File: frontend/styles/shared/tokens-layout.css
+- Shared tokens/layout aggregator.
+- Imports core theme tokens, base layout, and header/stat typography styles.
+- Serves as shared style foundation entrypoint.
+- Keeps global design system modular.
+
+File: frontend/styles/shared/tokens/base-layout.css
+- Base layout and structural utility styles.
+- Defines body/background behavior, nav bar, content wrappers, and loading bar visuals.
+- Establishes consistent spacing and responsive base rules.
+- Applied across all frontend pages.
+
+File: frontend/styles/shared/tokens/headers-and-stats.css
+- Typography and stat-component style layer.
+- Styles labels, page titles, descriptions, and stat value displays.
+- Encodes hierarchy and readability for dashboard-like sections.
+- Shared across home/admin/student views.
+
+File: frontend/styles/shared/tokens/theme-tokens.css
+- Core design token definitions and theme variables.
+- Declares color palette, shadows, radii, transitions, and font tokens.
+- Provides light/dark theme variable sets toggled via class.
+- Acts as single source of visual theming truth.
