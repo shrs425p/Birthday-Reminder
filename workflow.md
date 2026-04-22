@@ -113,7 +113,6 @@ flowchart TD
 
 - POST /api/login
 - PUT /api/password
-- PUT /api/password
 - POST /api/send-wishes (public shortcut)
 - /api/birthdays/* (public read + admin write)
 - /api/requests/* (public create + admin review)
