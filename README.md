@@ -16,89 +16,108 @@ It provides:
 
 ## Current Architecture
 
+Note: backend/node_modules is intentionally omitted for readability.
+
 ```text
 reminder/
-  backend/
-    config/
-      db.js
-      defaultTemplate.js
-    features/
-      auth/
-        controller.js
-        routes.js
-      birthdays/
-        controller.js
-        crudHandlers.js
-        importHandlers.js
-        wishHandlers.js
-        emailService.js
-        routes.js
-      requests/
-        controller.js
-        routes.js
-      settings/
-        controller.js
-        routes.js
-    middleware/
-      authMiddleware.js
-      errorHandler.js
-    uploads/
-    utils/
-      crypto.js
-    scheduler.js
-    server.js
-    package.json
-
-  frontend/
-    pages/
-      index.html
-      admin.html
-      student.html
-      404.html
-    style.css
-    styles/
-      shared/
-        tokens-layout.css
-        tokens/
-          theme-tokens.css
-          base-layout.css
-          headers-and-stats.css
-      features/
-        components.css
-        components/
-          cards-and-buttons.css
-          forms-and-animations.css
-          feedback-and-lists.css
-          advanced-ui.css
-      pages/
-        home-v2.css
-        home/
-          layout.css
-          widgets-and-cards.css
-          actions-and-background.css
-    js/
-      core/
-        auth.js
-        ui-utils.js
-        ui/
-          notifications.js
-          theme.js
-          motion.js
-          runtime.js
-          init.js
-        api/
-          shared.js
-          auth.js
-          birthdays.js
-          requests.js
-          settings.js
-      pages/
-        home.js
-        admin.js
-        student.js
-        admin/
-          requests.js
-          settings.js
+|-- backend/
+|   |-- config/
+|   |   |-- db.js
+|   |   \-- defaultTemplate.js
+|   |-- features/
+|   |   |-- auth/
+|   |   |   |-- controller.js
+|   |   |   \-- routes.js
+|   |   |-- birthdays/
+|   |   |   |-- controller.js
+|   |   |   |-- crudHandlers.js
+|   |   |   |-- emailService.js
+|   |   |   |-- importHandlers.js
+|   |   |   |-- routes.js
+|   |   |   \-- wishHandlers.js
+|   |   |-- requests/
+|   |   |   |-- controller.js
+|   |   |   \-- routes.js
+|   |   \-- settings/
+|   |       |-- controller.js
+|   |       \-- routes.js
+|   |-- middleware/
+|   |   |-- authMiddleware.js
+|   |   \-- errorHandler.js
+|   |-- uploads/
+|   |-- utils/
+|   |   \-- crypto.js
+|   |-- audit_db.js
+|   |-- database.db
+|   |-- kill.bat
+|   |-- package-lock.json
+|   |-- package.json
+|   |-- print-settings.js
+|   |-- scheduler.js
+|   |-- server.js
+|   \-- start.bat
+|-- frontend/
+|   |-- js/
+|   |   |-- core/
+|   |   |   |-- api/
+|   |   |   |   |-- auth.js
+|   |   |   |   |-- birthdays.js
+|   |   |   |   |-- requests.js
+|   |   |   |   |-- settings.js
+|   |   |   |   \-- shared.js
+|   |   |   |-- ui/
+|   |   |   |   |-- init.js
+|   |   |   |   |-- motion.js
+|   |   |   |   |-- notifications.js
+|   |   |   |   |-- runtime.js
+|   |   |   |   \-- theme.js
+|   |   |   |-- auth.js
+|   |   |   \-- ui-utils.js
+|   |   \-- pages/
+|   |       |-- admin/
+|   |       |   |-- requests.js
+|   |       |   \-- settings.js
+|   |       |-- admin.js
+|   |       |-- home.js
+|   |       \-- student.js
+|   |-- pages/
+|   |   |-- 404.html
+|   |   |-- admin.html
+|   |   |-- index.html
+|   |   \-- student.html
+|   |-- styles/
+|   |   |-- features/
+|   |   |   |-- components/
+|   |   |   |   |-- advanced-ui.css
+|   |   |   |   |-- cards-and-buttons.css
+|   |   |   |   |-- feedback-and-lists.css
+|   |   |   |   \-- forms-and-animations.css
+|   |   |   |-- components.__source.css
+|   |   |   \-- components.css
+|   |   |-- pages/
+|   |   |   |-- home/
+|   |   |   |   |-- actions-and-background.css
+|   |   |   |   |-- layout.css
+|   |   |   |   \-- widgets-and-cards.css
+|   |   |   \-- home-v2.css
+|   |   \-- shared/
+|   |       |-- tokens/
+|   |       |   |-- base-layout.css
+|   |       |   |-- headers-and-stats.css
+|   |       |   \-- theme-tokens.css
+|   |       \-- tokens-layout.css
+|   \-- style.css
+|-- .env
+|-- .env.example
+|-- .gitignore
+|-- GEMINI.md
+|-- PROJECT_FULL_REPORT.txt
+|-- README.md
+|-- render.yaml
+|-- report.txt
+|-- structure.txt
+|-- workflow.md
+\-- WORKING.md
 ```
 
 ## Main Features
